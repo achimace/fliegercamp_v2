@@ -1,0 +1,344 @@
+// Fliegercamp Database Schema
+// Version: 2.0
+// Database: MariaDB/MySQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// User & Authentication
+// ============================================
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  firstName     String
+  lastName      String
+  passwordHash  String
+  isPortalAdmin Boolean  @default(false)
+
+  // Profile
+  phone         String?
+  bio           String?  @db.Text
+  avatarUrl     String?
+
+  // Relations
+  memberships       Membership[]
+  airfieldBindings  AirfieldBinding[]
+  auditLogs         AuditLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@map("users")
+}
+
+// ============================================
+// Organizations (Vereine/Gruppen)
+// ============================================
+
+model Organization {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?  @db.Text
+
+  // Contact
+  email       String?
+  phone       String?
+  website     String?
+
+  // Address
+  address     String?
+  city        String?
+  postalCode  String?
+  country     String   @default("DE")
+
+  // Relations
+  memberships Membership[]
+  requests    Request[]
+  camps       Camp[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@map("organizations")
+}
+
+model Membership {
+  id             String       @id @default(cuid())
+  userId         String
+  organizationId String
+  role           MemberRole   @default(MEMBER)
+
+  // Relations
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, organizationId])
+  @@index([userId])
+  @@index([organizationId])
+  @@map("memberships")
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+// ============================================
+// Airfields (Flugplätze)
+// ============================================
+
+model Airfield {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  icaoCode    String?  @unique
+  description String?  @db.Text
+
+  // Location
+  address     String
+  city        String
+  postalCode  String
+  country     String   @default("DE")
+  latitude    Float?
+  longitude   Float?
+
+  // Features & Facilities
+  features    Json?    // Array of features (Hangar, Restaurant, etc.)
+
+  // Visibility
+  isPublished Boolean  @default(false)
+
+  // Images
+  coverImage  String?
+  images      Json?    // Array of image URLs
+
+  // Relations
+  bindings    AirfieldBinding[]
+  requests    Request[]
+  camps       Camp[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isPublished])
+  @@index([city])
+  @@map("airfields")
+}
+
+model AirfieldBinding {
+  id         String        @id @default(cuid())
+  userId     String
+  airfieldId String
+  role       AirfieldRole  @default(VIEWER)
+
+  // Relations
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  airfield   Airfield      @relation(fields: [airfieldId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime      @default(now())
+
+  @@unique([userId, airfieldId])
+  @@index([userId])
+  @@index([airfieldId])
+  @@map("airfield_bindings")
+}
+
+enum AirfieldRole {
+  OWNER
+  MANAGER
+  VIEWER
+}
+
+// ============================================
+// Requests & Camps
+// ============================================
+
+model Request {
+  id              String        @id @default(cuid())
+  organizationId  String
+  airfieldId      String
+
+  // Request Details
+  startDate       DateTime
+  endDate         DateTime
+  numParticipants Int
+  numAircraft     Int
+  message         String?       @db.Text
+
+  // Status
+  status          RequestStatus @default(PENDING)
+
+  // Response
+  responseMessage String?       @db.Text
+  respondedAt     DateTime?
+
+  // Relations
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  airfield        Airfield      @relation(fields: [airfieldId], references: [id], onDelete: Cascade)
+  camp            Camp?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([organizationId])
+  @@index([airfieldId])
+  @@index([status])
+  @@index([startDate])
+  @@map("requests")
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model Camp {
+  id             String       @id @default(cuid())
+  organizationId String
+  airfieldId     String
+  requestId      String       @unique
+
+  // Camp Details
+  name           String?
+  startDate      DateTime
+  endDate        DateTime
+
+  // Status
+  status         CampStatus   @default(UPCOMING)
+
+  // Notes
+  notes          String?      @db.Text
+
+  // Relations
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  airfield       Airfield     @relation(fields: [airfieldId], references: [id], onDelete: Cascade)
+  request        Request      @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  participants   Participant[]
+  aircraft       Aircraft[]
+  messages       Message[]
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([airfieldId])
+  @@index([startDate])
+  @@index([status])
+  @@map("camps")
+}
+
+enum CampStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+// ============================================
+// Participants & Aircraft
+// ============================================
+
+model Participant {
+  id         String   @id @default(cuid())
+  campId     String
+  firstName  String
+  lastName   String
+  email      String
+  phone      String?
+
+  // License Info (optional)
+  licenseType String?
+  licenseNumber String?
+
+  // Relations
+  camp       Camp     @relation(fields: [campId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+
+  @@index([campId])
+  @@map("participants")
+}
+
+model Aircraft {
+  id           String   @id @default(cuid())
+  campId       String
+  registration String   // Kennzeichen (z.B. D-1234)
+  type         String   // Typ (z.B. ASK-21)
+  manufacturer String?
+
+  // Relations
+  camp         Camp     @relation(fields: [campId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime @default(now())
+
+  @@index([campId])
+  @@map("aircraft")
+}
+
+// ============================================
+// Communication
+// ============================================
+
+model Message {
+  id        String      @id @default(cuid())
+  campId    String
+  senderId  String?     // Nullable for system messages
+  content   String      @db.Text
+  type      MessageType @default(USER)
+
+  // Relations
+  camp      Camp        @relation(fields: [campId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime    @default(now())
+
+  @@index([campId])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+enum MessageType {
+  USER
+  SYSTEM
+  NOTIFICATION
+}
+
+// ============================================
+// Audit Log (DSGVO & Compliance)
+// ============================================
+
+model AuditLog {
+  id       String   @id @default(cuid())
+  userId   String
+  action   String   // CREATE, UPDATE, DELETE, etc.
+  entity   String   // User, Organization, Request, etc.
+  entityId String
+  changes  Json?    // Details der Änderung
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

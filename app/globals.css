@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Colors */
+    --primary-black: #000000;
+
+    --neutral-white: #ffffff;
+    --neutral-background: #f8f7f4;
+    --neutral-off-white: #fafafa;
+    --neutral-light-gray: #f5f5f5;
+    --neutral-gray-100: #e5e5e5;
+    --neutral-gray-200: #d4d4d4;
+    --neutral-gray-300: #a3a3a3;
+    --neutral-gray-400: #737373;
+    --neutral-gray-500: #525252;
+    --neutral-gray-700: #404040;
+    --neutral-gray-900: #171717;
+
+    --accent-yellow: #ffd700;
+    --accent-yellow-hover: #ffc700;
+
+    --semantic-success: #10b981;
+    --semantic-success-light: #d1fae5;
+    --semantic-warning: #f59e0b;
+    --semantic-warning-light: #fef3c7;
+    --semantic-error: #ef4444;
+    --semantic-error-light: #fee2e2;
+    --semantic-info: #3b82f6;
+    --semantic-info-light: #dbeafe;
+
+    --interactive-link: #3b82f6;
+    --interactive-link-hover: #2563eb;
+    --interactive-link-visited: #7c3aed;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-neutral-background text-neutral-gray-700;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+
+  h1 {
+    @apply text-5xl font-extrabold leading-tight text-primary-black;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    @apply text-4xl font-bold leading-tight text-neutral-gray-900;
+  }
+
+  h3 {
+    @apply text-3xl font-semibold leading-normal text-neutral-gray-900;
+  }
+
+  h4 {
+    @apply text-xl font-semibold leading-normal text-neutral-gray-700;
+  }
+
+  p {
+    @apply text-sm leading-relaxed text-neutral-gray-500;
+  }
+
+  a {
+    @apply text-interactive-link transition-colors hover:text-interactive-link-hover;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
