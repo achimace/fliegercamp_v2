@@ -61,27 +61,30 @@ jobs:
             git init
             git remote add origin https://github.com/achimace/fliegercamp_v2.git
             git fetch origin
+            
+            # FIX: 'checkout' entfernen und direkt 'reset --hard' verwenden
+            # Dies überschreibt alle lokalen/nicht verfolgten Dateien
             git reset --hard origin/main
             
-            echo "📚 Installing dependencies (inkl. devDeps für Prisma)..."
+            echo "📚 Installing all dependencies (inkl. devDeps für Build)..."
+            # Das '--production' Flag wird entfernt, damit Prisma und Tailwind installiert werden
             npm install --legacy-peer-deps
             
-            echo "🔧 Checking environment..."
-            if [ ! -f .env.production ]; then
-              echo "⚠️ Creating basic .env.production..."
-              echo "NODE_ENV=production" > .env.production
-            fi
-
-            echo "🗄️ Running database migrations..."
-            npx prisma migrate deploy || echo "⚠️ Migration skipped"
-            npx prisma generate
-            
-            # --- FIX: devDependencies (z.B. Playwright) vor dem Build entfernen ---
-            echo "🧹 Pruning devDependencies..."
-            npm prune --production
+            # --- FIX: Alle GitHub Secrets in die .env.production schreiben ---
+            echo "🔧 Creating .env.production file..."
+            echo "NODE_ENV=production" > .env.production
+            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.production
+            echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
+            echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env.production
             # --- ENDE FIX ---
 
+            echo "🗄️ Running database migrations..."
+            # Das '|| echo' wurde entfernt. Wenn die Migration fehlschlägt, soll das Deployment stoppen.
+            npx prisma migrate deploy
+            npx prisma generate
+
             echo "🔨 Building application..."
+            # Der Build läuft jetzt NACH Prisma und MIT allen devDependencies
             npm run build
             
             echo "🔄 Restarting application..."
