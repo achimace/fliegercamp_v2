@@ -59,30 +59,35 @@ jobs:
             git fetch origin
             git reset --hard origin/main
             
-            # --- FIX: NPM-Installationsstrategie geändert ---
-            echo "📚 Installing production dependencies..."
-            # 1. Nur Production-Dependencies installieren
-            npm install --omit=dev --legacy-peer-deps
-            
-            echo "📚 Installing required devDependencies for build..."
-            # 2. Manuell die für den Build nötigen devDeps nachinstallieren
-            npm install prisma@5 tailwindcss postcss autoprefixer --legacy-peer-deps
-            # --- ENDE FIX ---
-            
-            # Alle GitHub Secrets in die .env.production schreiben UND exportieren
+            # --- FIX: Secrets exportieren VOR der Installation ---
             echo "🔧 Creating .env.production file and exporting variables..."
             
+            # 1. Variablen für die aktuelle Shell-Sitzung exportieren
             export NODE_ENV=production
             export DATABASE_URL=${{ secrets.DATABASE_URL }}
             export NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
             export NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
             
+            # 2. Dieselben Variablen in die .env.production schreiben (für PM2)
             echo "NODE_ENV=production" > .env.production
             echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.production
             echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
             echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env.production
+            # --- ENDE FIX ---
+
+            # --- FIX: NPM-Installationsstrategie geändert ---
+            echo "📚 Installing production dependencies (ignoring scripts)..."
+            # 1. Nur Production-Dependencies installieren, Postinstall-Skripts ignorieren
+            npm install --omit=dev --legacy-peer-deps --ignore-scripts
+            
+            echo "📚 Installing required devDependencies for build (running scripts)..."
+            # 2. Manuell die für den Build nötigen devDeps nachinstallieren
+            # Dies wird das 'prisma generate' postinstall-Skript auslösen, das jetzt funktioniert
+            npm install prisma@5 tailwindcss postcss autoprefixer --legacy-peer-deps
+            # --- ENDE FIX ---
 
             echo "🗄️ Running database migrations..."
+            # 'prisma generate' ist jetzt redundant (da es per postinstall lief), aber schadet nicht
             npx prisma migrate deploy
             npx prisma generate
 
