@@ -39,7 +39,7 @@ jobs:
             set -e
             echo "🚀 Starting deployment..."
             cd ${{ secrets.DEPLOY_PATH }}
-            
+            git config --global --add safe.directory ${{ secrets.DEPLOY_PATH }}
             echo "📦 Creating backup..."
             if [ -d ".next" ]; then
               tar -czf backup-$(date +%Y%m%d-%H%M%S).tar.gz \
