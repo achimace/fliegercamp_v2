@@ -68,7 +68,7 @@ jobs:
             # --- ENDE FIX ---
             
             echo "📚 Installing dependencies..."
-            npm install --production --legacy-peer-deps
+            npm install --legacy-peer-deps
             
             echo "🔧 Checking environment..."
             if [ ! -f .env.production ]; then
