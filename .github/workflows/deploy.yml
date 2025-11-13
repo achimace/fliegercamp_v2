@@ -53,15 +53,18 @@ jobs:
             fi
             
             echo "⬇️ Pulling latest code..."
-            if [ -d .git ]; then
-              git fetch origin
-              git reset --hard origin/main
-            else
-              git init
-              git remote add origin https://github.com/achimace/fliegercamp_v2.git
-              git fetch origin
-              git checkout -b main origin/main
-            fi
+            
+            # --- FIX: Potenziell kaputtes .git-Verzeichnis entfernen, um saubere Initialisierung zu erzwingen ---
+            rm -rf .git
+            
+            # Repository immer neu initialisieren
+            git init
+            git remote add origin https://github.com/achimace/fliegercamp_v2.git
+            git fetch origin
+            # Sicherstellen, dass der main-Branch ausgecheckt wird, falls er schon existiert (durch fetch)
+            git checkout main || git checkout -b main origin/main
+            git reset --hard origin/main
+            # --- ENDE FIX ---
             
             echo "📚 Installing dependencies..."
             npm install --production --legacy-peer-deps
