@@ -74,9 +74,9 @@ jobs:
             echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
             echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env.production
 
-            # --- FIX: Einzelner, vollständiger Install ---
-            echo "📚 Installing all dependencies (inkl. devDeps für Build)..."
-            npm install --legacy-peer-deps
+            # --- FIX: Installation ignoriert Postinstall-Skripte ---
+            echo "📚 Installing all dependencies (ignoring scripts)..."
+            npm install --legacy-peer-deps --ignore-scripts
             # --- ENDE FIX ---
 
             echo "🗄️ Running database migrations..."
