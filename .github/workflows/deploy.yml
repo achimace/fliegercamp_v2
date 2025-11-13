@@ -62,7 +62,7 @@ jobs:
             echo "📚 Installing all dependencies (inkl. devDeps für Build)..."
             npm install --legacy-peer-deps
             
-            # --- FIX: Alle GitHub Secrets in die .env.production schreiben UND exportieren ---
+            # Alle GitHub Secrets in die .env.production schreiben UND exportieren
             echo "🔧 Creating .env.production file and exporting variables..."
             
             # 1. Variablen für die aktuelle Shell-Sitzung exportieren (für Prisma + Build)
@@ -76,13 +76,14 @@ jobs:
             echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.production
             echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
             echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env.production
-            # --- ENDE FIX ---
 
             echo "🗄️ Running database migrations..."
             npx prisma migrate deploy
             npx prisma generate
 
             echo "🔨 Building application..."
+            # --- FIX: Alten Build-Cache vor dem Build entfernen ---
+            rm -rf .next
             npm run build
             
             echo "🔄 Restarting application..."
