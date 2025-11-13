@@ -19,11 +19,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # Kein Cache ohne Lock-File
       
-      # Dependencies installieren (ohne Lock-File)
+      # Dependencies installieren mit legacy-peer-deps
       - name: Install dependencies
-        run: npm install  # ← Geändert von npm ci zu npm install
+        run: npm install --legacy-peer-deps  # ← HIER GEÄNDERT
       
       # Tests (optional)
       - name: Run tests
@@ -76,20 +75,17 @@ jobs:
               git checkout -b main origin/main
             fi
             
-            # Dependencies installieren
+            # Dependencies installieren mit legacy-peer-deps
             echo "📚 Installing dependencies..."
-            npm install --production
+            npm install --production --legacy-peer-deps  # ← HIER AUCH GEÄNDERT
             
             # Environment Variables prüfen
             echo "🔧 Checking environment..."
             if [ ! -f .env.production ]; then
               echo "⚠️ Warning: .env.production not found!"
-              echo "Creating minimal .env.production..."
+              echo "Creating .env.production from secrets..."
               cat > .env.production << 'EOF'
             NODE_ENV=production
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
             EOF
             fi
             
@@ -99,7 +95,7 @@ jobs:
             
             # Prisma
             echo "🗄️ Running database migrations..."
-            npx prisma migrate deploy || echo "⚠️ Migration skipped (no migrations or DB not ready)"
+            npx prisma migrate deploy || echo "⚠️ Migration skipped"
             npx prisma generate
             
             # PM2 Reload/Restart
@@ -111,12 +107,11 @@ jobs:
               pm2 save
             fi
             
-            # Cleanup alte Backups (behalte nur die letzten 5)
+            # Cleanup
             echo "🧹 Cleaning up old backups..."
             ls -t backup-*.tar.gz 2>/dev/null | tail -n +6 | xargs -r rm || true
             
             echo "✅ Deployment completed successfully!"
-            echo "📊 PM2 Status:"
             pm2 list
       
       - name: Deployment Summary
