@@ -22,41 +22,41 @@ const config: Config = {
         primary: {
           black: '#000000',
         },
-        // Neutral Colors
+        // Neutral Colors - KORRIGIERT: Bindestriche in den Namen
         neutral: {
           white: '#FFFFFF',
           background: '#F8F7F4',
-          offWhite: '#FAFAFA',
-          lightGray: '#F5F5F5',
-          gray100: '#E5E5E5',
-          gray200: '#D4D4D4',
-          gray300: '#A3A3A3',
-          gray400: '#737373',
-          gray500: '#525252',
-          gray700: '#404040',
-          gray900: '#171717',
+          'off-white': '#FAFAFA',
+          'light-gray': '#F5F5F5',
+          'gray-100': '#E5E5E5',
+          'gray-200': '#D4D4D4',
+          'gray-300': '#A3A3A3',
+          'gray-400': '#737373',
+          'gray-500': '#525252',
+          'gray-700': '#404040',
+          'gray-900': '#171717',
         },
         // Accent Colors
         accent: {
           yellow: '#FFD700',
-          yellowHover: '#FFC700',
+          'yellow-hover': '#FFC700',
         },
         // Semantic Colors
         semantic: {
           success: '#10B981',
-          successLight: '#D1FAE5',
+          'success-light': '#D1FAE5',
           warning: '#F59E0B',
-          warningLight: '#FEF3C7',
+          'warning-light': '#FEF3C7',
           error: '#EF4444',
-          errorLight: '#FEE2E2',
+          'error-light': '#FEE2E2',
           info: '#3B82F6',
-          infoLight: '#DBEAFE',
+          'info-light': '#DBEAFE',
         },
         // Interactive Colors
         interactive: {
           link: '#3B82F6',
-          linkHover: '#2563EB',
-          linkVisited: '#7C3AED',
+          'link-hover': '#2563EB',
+          'link-visited': '#7C3AED',
         },
         // shadcn/ui compatibility
         border: '#E5E5E5',
