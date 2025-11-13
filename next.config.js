@@ -10,7 +10,7 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    // HIER IST DIE ÄNDERUNG: Verhindert, dass Playwright (devDependency) kompiliert wird
+    // Diese Zeile ist entscheidend
     serverComponentsExternalPackages: ['playwright-core'],
   },
   // Environment variables exposed to the browser
@@ -72,5 +72,6 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+
 
 
