@@ -61,13 +61,9 @@ jobs:
             git init
             git remote add origin https://github.com/achimace/fliegercamp_v2.git
             git fetch origin
-            
-            # --- FIX: 'checkout' entfernen und direkt 'reset --hard' verwenden ---
-            # Dies überschreibt alle lokalen/nicht verfolgten Dateien und verhindert den Konflikt
             git reset --hard origin/main
-            # --- ENDE FIX ---
             
-            echo "📚 Installing dependencies..."
+            echo "📚 Installing dependencies (inkl. devDeps für Prisma)..."
             npm install --legacy-peer-deps
             
             echo "🔧 Checking environment..."
@@ -75,13 +71,18 @@ jobs:
               echo "⚠️ Creating basic .env.production..."
               echo "NODE_ENV=production" > .env.production
             fi
-            
-            echo "🔨 Building application..."
-            npm run build
-            
+
             echo "🗄️ Running database migrations..."
             npx prisma migrate deploy || echo "⚠️ Migration skipped"
             npx prisma generate
+            
+            # --- FIX: devDependencies (z.B. Playwright) vor dem Build entfernen ---
+            echo "🧹 Pruning devDependencies..."
+            npm prune --production
+            # --- ENDE FIX ---
+
+            echo "🔨 Building application..."
+            npm run build
             
             echo "🔄 Restarting application..."
             if pm2 list | grep -q fliegercamp; then
@@ -91,7 +92,7 @@ jobs:
               pm2 save
             fi
             
-            echo "🧹 Cleaning up..."
+            echo "🧹 Cleaning up old backups..."
             ls -t backup-*.tar.gz 2>/dev/null | tail -n +6 | xargs -r rm || true
             
             echo "✅ Deployment completed!"
