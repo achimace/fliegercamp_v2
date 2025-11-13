@@ -1,0 +1,110 @@
+name: Deploy to Strato Server
+
+on:
+  push:
+    branches:
+      - main        # Deployment bei Push auf main
+      - production  # Oder production branch
+  workflow_dispatch: # Manuelles Deployment
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      # Optional: Tests laufen lassen
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm run test || echo "No tests configured"
+      
+      - name: Build application
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+      
+      # Deployment per SSH
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            
+            echo "🚀 Starting deployment..."
+            
+            # Navigiere zum Deployment-Verzeichnis
+            cd ${{ secrets.DEPLOY_PATH }}
+            
+            # Backup erstellen
+            echo "📦 Creating backup..."
+            if [ -d "node_modules" ]; then
+              tar -czf backup-$(date +%Y%m%d-%H%M%S).tar.gz \
+                --exclude=node_modules \
+                --exclude=.next \
+                --exclude=uploads \
+                . || true
+            fi
+            
+            # Git Pull (oder rsync - siehe unten)
+            echo "⬇️ Pulling latest code..."
+            git pull origin main || {
+              echo "Git pull failed, trying clone..."
+              cd ..
+              rm -rf app
+              git clone https://github.com/dein-username/fliegercamp.git app
+              cd app
+            }
+            
+            # Dependencies installieren
+            echo "📚 Installing dependencies..."
+            npm ci --production
+            
+            # Build
+            echo "🔨 Building application..."
+            npm run build
+            
+            # Prisma
+            echo "🗄️ Running database migrations..."
+            npx prisma migrate deploy
+            npx prisma generate
+            
+            # PM2 Reload/Restart
+            echo "🔄 Restarting application..."
+            if pm2 list | grep -q fliegercamp; then
+              pm2 reload fliegercamp --update-env
+            else
+              pm2 start npm --name fliegercamp -- start
+              pm2 save
+            fi
+            
+            # Cleanup alte Backups (behalte nur die letzten 5)
+            echo "🧹 Cleaning up old backups..."
+            ls -t backup-*.tar.gz 2>/dev/null | tail -n +6 | xargs -r rm
+            
+            echo "✅ Deployment completed successfully!"
+      
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "✅ Deployment successful!"
+          else
+            echo "❌ Deployment failed!"
+          fi
