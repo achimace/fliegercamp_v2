@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anmelden – Fliegercamp</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Projekt Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+
+    <style>
+        /* Login-spezifisches Styling */
+        body {
+            background: #F8F7F4;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .login-card {
+            background: #FFFFFF;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            max-width: 480px;
+            width: 100%;
+            padding: 3rem 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .login-card {
+                padding: 3rem 3rem;
+            }
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-logo img {
+            height: 40px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            font-size: 0.9375rem;
+            color: #525252;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #171717;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            background: #FFFFFF;
+        }
+
+        .form-control:focus {
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #A3A3A3;
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #737373;
+            cursor: pointer;
+            padding: 0.25rem;
+            line-height: 1;
+            font-size: 1.25rem;
+            transition: color 0.2s;
+        }
+
+        .password-toggle:hover {
+            color: #000;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-check-input {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: #000;
+            border-color: #000;
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+            border-color: #000;
+        }
+
+        .form-check-label {
+            font-size: 0.875rem;
+            color: #404040;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 1.5rem;
+        }
+
+        .forgot-password a {
+            font-size: 0.875rem;
+            color: #525252;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .forgot-password a:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            width: 100%;
+            background: #FFD700;
+            color: #000;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-login:hover {
+            background: #FFC700;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            background: #F5F5F5;
+            color: #A3A3A3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            color: #737373;
+            font-size: 0.875rem;
+        }
+
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-social {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 0.5rem;
+            background: #FFFFFF;
+            color: #171717;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-social:hover {
+            border-color: #000;
+            background: #FAFAFA;
+        }
+
+        .btn-social i {
+            font-size: 1.25rem;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #E5E5E5;
+        }
+
+        .login-footer p {
+            font-size: 0.9375rem;
+            color: #525252;
+            margin: 0;
+        }
+
+        .login-footer a {
+            color: #000;
+            font-weight: 600;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .login-footer a:hover {
+            opacity: 0.7;
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 0.5rem;
+            border: none;
+            padding: 0.875rem 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .alert-danger {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .back-to-home {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #525252;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .back-to-home:hover {
+            color: #000;
+        }
+
+        .back-to-home i {
+            font-size: 1rem;
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .back-to-home {
+                top: 1rem;
+                left: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back-to-home">
+        <i class="bi bi-arrow-left"></i>
+        <span>Zurück zur Startseite</span>
+    </a>
+
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo -->
+            <div class="login-logo">
+                <img src="fliegercamp-logo.png" alt="Fliegercamp Logo">
+            </div>
+
+            <!-- Header -->
+            <div class="login-header">
+                <h1>Willkommen zurück</h1>
+                <p>Melde dich an, um deine Fluglager zu verwalten</p>
+            </div>
+
+            <!-- Error Alert (versteckt, wird bei Bedarf angezeigt) -->
+            <div class="alert alert-danger d-none" id="errorAlert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span id="errorMessage"></span>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <!-- E-Mail -->
+                <div class="form-group">
+                    <label for="email" class="form-label">E-Mail-Adresse</label>
+                    <input 
+                        type="email" 
+                        class="form-control" 
+                        id="email" 
+                        name="email"
+                        placeholder="deine@email.de"
+                        required
+                        autocomplete="email">
+                </div>
+
+                <!-- Passwort -->
+                <div class="form-group">
+                    <label for="password" class="form-label">Passwort</label>
+                    <div class="password-field">
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            name="password"
+                            placeholder="Dein Passwort"
+                            required
+                            autocomplete="current-password">
+                        <button 
+                            type="button" 
+                            class="password-toggle" 
+                            id="togglePassword"
+                            aria-label="Passwort anzeigen/verbergen">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Angemeldet bleiben & Passwort vergessen -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input 
+                            type="checkbox" 
+                            class="form-check-input" 
+                            id="rememberMe"
+                            name="rememberMe">
+                        <label class="form-check-label" for="rememberMe">
+                            Angemeldet bleiben
+                        </label>
+                    </div>
+                    <div class="forgot-password mb-0">
+                        <a href="passwort_vergessen.html">Passwort vergessen?</a>
+                    </div>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="btn-login">
+                    Anmelden
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>oder</span>
+            </div>
+
+            <!-- Social Login -->
+            <div class="social-login">
+                <button type="button" class="btn-social" id="googleLogin">
+                    <i class="bi bi-google"></i>
+                    <span>Mit Google anmelden</span>
+                </button>
+                <button type="button" class="btn-social" id="facebookLogin">
+                    <i class="bi bi-facebook"></i>
+                    <span>Mit Facebook anmelden</span>
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <p>Noch kein Konto? <a href="register.html">Jetzt registrieren</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Passwort anzeigen/verbergen
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        });
+
+        // Login Form Submit
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // Hier würde die tatsächliche Login-Logik implementiert werden
+            console.log('Login attempt:', { email, password, rememberMe });
+
+            // Beispiel für Error-Handling
+            // showError('E-Mail oder Passwort ist falsch');
+
+            // Beispiel für erfolgreichen Login
+            // window.location.href = 'fluglager_organisator.html';
+        });
+
+        // Google Login
+        document.getElementById('googleLogin').addEventListener('click', function() {
+            console.log('Google Login clicked');
+            // Hier würde die Google OAuth Integration erfolgen
+        });
+
+        // Facebook Login
+        document.getElementById('facebookLogin').addEventListener('click', function() {
+            console.log('Facebook Login clicked');
+            // Hier würde die Facebook OAuth Integration erfolgen
+        });
+
+        // Error anzeigen
+        function showError(message) {
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorAlert.classList.remove('d-none');
+            
+            // Nach 5 Sekunden ausblenden
+            setTimeout(() => {
+                errorAlert.classList.add('d-none');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flugplätze entdecken – Fliegercamp</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Projekt Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+
+    <style>
+        body {
+            background: #F8F7F4;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Header Bereich */
+        .page-header {
+            background: #FFFFFF;
+            border-bottom: 1px solid #E5E5E5;
+            padding: 2rem 0;
+        }
+
+        .page-header-content {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .page-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            color: #525252;
+            margin: 0;
+        }
+
+        /* Layout Container */
+        .search-layout {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .search-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .filter-sidebar {
+                position: sticky;
+                top: 80px;
+                z-index: 100;
+            }
+        }
+
+        /* Filter Sidebar */
+        .filter-sidebar {
+            background: #FFFFFF;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 100px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #000;
+            margin: 0;
+        }
+
+        .filter-reset {
+            background: none;
+            border: none;
+            color: #525252;
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0;
+        }
+
+        .filter-reset:hover {
+            color: #000;
+        }
+
+        .filter-group {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .filter-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .filter-group-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+
+        .filter-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 0.5rem;
+            font-size: 0.9375rem;
+            transition: border-color 0.2s;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #000;
+        }
+
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .filter-checkbox:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-checkbox input[type="checkbox"] {
+            width: 1.125rem;
+            height: 1.125rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .filter-checkbox input[type="checkbox"]:checked {
+            background-color: #000;
+            border-color: #000;
+        }
+
+        .filter-checkbox label {
+            font-size: 0.9375rem;
+            color: #404040;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .filter-range {
+            margin-top: 0.75rem;
+        }
+
+        .filter-range input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: #E5E5E5;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .filter-range-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: #737373;
+            margin-top: 0.5rem;
+        }
+
+        /* Results Area */
+        .results-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Results Header */
+        .results-header {
+            background: #FFFFFF;
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .results-count {
+            font-size: 0.9375rem;
+            color: #404040;
+        }
+
+        .results-count strong {
+            font-weight: 600;
+            color: #000;
+        }
+
+        .results-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            background: #F8F7F4;
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .view-toggle-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            color: #737373;
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active {
+            background: #FFFFFF;
+            color: #000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .view-toggle-btn i {
+            font-size: 1.125rem;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 0.5rem;
+            font-size: 0.9375rem;
+            background: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #000;
+        }
+
+        /* Airfield Cards Grid */
+        .airfields-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .airfields-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Airfield Card */
+        .airfield-card {
+            background: #FFFFFF;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .airfield-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .airfield-card-image {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+        }
+
+        .airfield-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .airfield-card-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: #FFFFFF;
+            color: #000;
+            padding: 0.375rem 0.875rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .airfield-card-favorite {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .airfield-card-favorite:hover {
+            background: #FFFFFF;
+            transform: scale(1.1);
+        }
+
+        .airfield-card-favorite i {
+            font-size: 1.125rem;
+            color: #000;
+        }
+
+        .airfield-card-favorite.active i {
+            color: #DC2626;
+        }
+
+        .airfield-card-body {
+            padding: 1.25rem;
+        }
+
+        .airfield-card-location {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 0.25rem;
+        }
+
+        .airfield-card-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 0.75rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .airfield-card-features {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: #737373;
+            font-size: 0.875rem;
+        }
+
+        .airfield-card-features i {
+            font-size: 1rem;
+        }
+
+        .airfield-card-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .airfield-card-stars {
+            display: flex;
+            gap: 0.125rem;
+        }
+
+        .airfield-card-stars i {
+            color: #FFD700;
+            font-size: 0.875rem;
+        }
+
+        .airfield-card-rating-text {
+            font-size: 0.875rem;
+            color: #404040;
+        }
+
+        .airfield-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #E5E5E5;
+        }
+
+        .airfield-card-price {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: #000;
+        }
+
+        .airfield-card-price strong {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .airfield-card-availability {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.875rem;
+            color: #10B981;
+            font-weight: 500;
+        }
+
+        .airfield-card-availability i {
+            font-size: 0.75rem;
+        }
+
+        .airfield-card-availability.limited {
+            color: #F59E0B;
+        }
+
+        .airfield-card-availability.unavailable {
+            color: #737373;
+        }
+
+        /* Pagination */
+        .pagination-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #E5E5E5;
+            background: #FFFFFF;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover {
+            border-color: #000;
+            background: #F8F7F4;
+        }
+
+        .pagination-btn.active {
+            background: #000;
+            color: #FFFFFF;
+            border-color: #000;
+        }
+
+        /* Mobile Filter Toggle */
+        .mobile-filter-toggle {
+            display: none;
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #000;
+            color: #FFFFFF;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .mobile-filter-toggle i {
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-filter-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .filter-sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                max-width: 400px;
+                height: 100vh;
+                z-index: 1100;
+                transition: left 0.3s;
+                max-height: 100vh;
+            }
+
+            .filter-sidebar.active {
+                left: 0;
+            }
+
+            .filter-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1050;
+                display: none;
+            }
+
+            .filter-overlay.active {
+                display: block;
+            }
+        }
+
+        /* Loading State */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #E5E5E5;
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: #FFFFFF;
+            border-radius: 1rem;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #D4D4D4;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #737373;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state button {
+            background: #FFD700;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body data-active-nav="flugplaetze">
+    <!-- Globale Navigation -->
+    <div id="global-layout"></div>
+
+    <main class="flex-grow-1">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-header-content">
+                <h1 class="page-title">Flugplätze entdecken</h1>
+                <p class="page-subtitle">Finde den perfekten Flugplatz für dein nächstes Fluglager</p>
+            </div>
+        </div>
+
+        <!-- Search Layout -->
+        <div class="search-layout">
+            <!-- Filter Sidebar -->
+            <aside class="filter-sidebar" id="filterSidebar">
+                <div class="filter-header">
+                    <h2 class="filter-title">Filter</h2>
+                    <button class="filter-reset" id="resetFilters">Zurücksetzen</button>
+                </div>
+
+                <!-- Ort / Region -->
+                <div class="filter-group">
+                    <div class="filter-group-title">Ort oder PLZ</div>
+                    <input 
+                        type="text" 
+                        class="filter-input" 
+                        placeholder="z.B. München oder 85235"
+                        id="locationInput">
+                </div>
+
+                <!-- Zeitraum -->
+                <div class="filter-group">
+                    <div class="filter-group-title">Verfügbarkeit</div>
+                    <input 
+                        type="date" 
+                        class="filter-input mb-2" 
+                        placeholder="Von"
+                        id="dateFrom">
+                    <input 
+                        type="date" 
+                        class="filter-input" 
+                        placeholder="Bis"
+                        id="dateTo">
+                </div>
+
+                <!-- Startarten -->
+                <div class="filter-group">
+                    <div class="filter-group-title">Startarten</div>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="startart" value="winde" checked>
+                        <span>Windenschlepp</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="startart" value="fschlepp" checked>
+                        <span>F-Schlepp</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="startart" value="eigenstart">
+                        <span>Eigenstart</span>
+                    </label>
+                </div>
+
+                <!-- Ausstattung -->
+                <div class="filter-group">
+                    <div class="filter-group-title">Ausstattung</div>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="ausstattung" value="halle">
+                        <span>Halle</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="ausstattung" value="werkstatt">
+                        <span>Werkstatt</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="ausstattung" value="camping">
+                        <span>Camping</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="ausstattung" value="zimmer">
+                        <span>Zimmer/Unterkunft</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="ausstattung" value="gastronomie">
+                        <span>Gastronomie</span>
+                    </label>
+                </div>
+
+                <!-- Bahnlänge -->
+                <div class="filter-group">
+                    <div class="filter-group-title">Bahnlänge (min.)</div>
+                    <div class="filter-range">
+                        <input 
+                            type="range" 
+                            min="300" 
+                            max="1500" 
+                            step="100" 
+                            value="600" 
+                            id="runwayLength">
+                        <div class="filter-range-label">
+                            <span>300m</span>
+                            <span id="runwayLengthValue">600m</span>
+                            <span>1500m</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preis -->
+                <div class="filter-group">
+                    <div class="filter-group-title">Preis pro Tag (max.)</div>
+                    <div class="filter-range">
+                        <input 
+                            type="range" 
+                            min="20" 
+                            max="200" 
+                            step="10" 
+                            value="100" 
+                            id="maxPrice">
+                        <div class="filter-range-label">
+                            <span>20€</span>
+                            <span id="maxPriceValue">100€</span>
+                            <span>200€</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Results Area -->
+            <div class="results-area">
+                <!-- Results Header -->
+                <div class="results-header">
+                    <div class="results-count">
+                        <strong>42 Flugplätze</strong> gefunden
+                    </div>
+                    <div class="results-controls">
+                        <div class="view-toggle">
+                            <button class="view-toggle-btn active" data-view="grid">
+                                <i class="bi bi-grid-3x3-gap-fill"></i>
+                            </button>
+                            <button class="view-toggle-btn" data-view="list">
+                                <i class="bi bi-list-ul"></i>
+                            </button>
+                        </div>
+                        <select class="sort-select" id="sortSelect">
+                            <option value="relevance">Relevanz</option>
+                            <option value="rating">Bewertung</option>
+                            <option value="price-asc">Preis aufsteigend</option>
+                            <option value="price-desc">Preis absteigend</option>
+                            <option value="distance">Entfernung</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Airfields Grid -->
+                <div class="airfields-grid" id="airfieldsGrid">
+                    <!-- Airfield Card 1 -->
+                    <a href="flugplatz_oeffentlich.html" class="airfield-card">
+                        <div class="airfield-card-image">
+                            <img src="https://images.unsplash.com/photo-1474302770737-173ee21bab63?w=600" alt="Flugplatz Ohlstadt">
+                            <div class="airfield-card-badge">Verfügbar</div>
+                            <button class="airfield-card-favorite" onclick="event.preventDefault(); toggleFavorite(this);">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <div class="airfield-card-body">
+                            <div class="airfield-card-location">Ohlstadt, Bayern</div>
+                            <h3 class="airfield-card-name">Flugplatz Ohlstadt</h3>
+                            <div class="airfield-card-features">
+                                <span><i class="bi bi-arrows-angle-expand"></i> 800m</span>
+                                <span><i class="bi bi-wind"></i> Winde</span>
+                                <span><i class="bi bi-airplane"></i> F-Schlepp</span>
+                            </div>
+                            <div class="airfield-card-rating">
+                                <div class="airfield-card-stars">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                                <span class="airfield-card-rating-text">5.0 (23 Bewertungen)</span>
+                            </div>
+                            <div class="airfield-card-footer">
+                                <div class="airfield-card-price">
+                                    ab <strong>45€</strong> / Tag
+                                </div>
+                                <div class="airfield-card-availability">
+                                    <i class="bi bi-circle-fill"></i>
+                                    <span>Verfügbar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Airfield Card 2 -->
+                    <a href="flugplatz_oeffentlich.html" class="airfield-card">
+                        <div class="airfield-card-image">
+                            <img src="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=600" alt="Flugplatz Hahnweide">
+                            <div class="airfield-card-badge">Begrenzt</div>
+                            <button class="airfield-card-favorite" onclick="event.preventDefault(); toggleFavorite(this);">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <div class="airfield-card-body">
+                            <div class="airfield-card-location">Kirchheim unter Teck, BW</div>
+                            <h3 class="airfield-card-name">Flugplatz Hahnweide</h3>
+                            <div class="airfield-card-features">
+                                <span><i class="bi bi-arrows-angle-expand"></i> 900m</span>
+                                <span><i class="bi bi-wind"></i> Winde</span>
+                                <span><i class="bi bi-airplane"></i> F-Schlepp</span>
+                            </div>
+                            <div class="airfield-card-rating">
+                                <div class="airfield-card-stars">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-half"></i>
+                                </div>
+                                <span class="airfield-card-rating-text">4.8 (41 Bewertungen)</span>
+                            </div>
+                            <div class="airfield-card-footer">
+                                <div class="airfield-card-price">
+                                    ab <strong>55€</strong> / Tag
+                                </div>
+                                <div class="airfield-card-availability limited">
+                                    <i class="bi bi-circle-fill"></i>
+                                    <span>Begrenzt</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Airfield Card 3 -->
+                    <a href="flugplatz_oeffentlich.html" class="airfield-card">
+                        <div class="airfield-card-image">
+                            <img src="https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=600" alt="Flugplatz Königsdorf">
+                            <div class="airfield-card-badge">Verfügbar</div>
+                            <button class="airfield-card-favorite active" onclick="event.preventDefault(); toggleFavorite(this);">
+                                <i class="bi bi-heart-fill"></i>
+                            </button>
+                        </div>
+                        <div class="airfield-card-body">
+                            <div class="airfield-card-location">Königsdorf, Bayern</div>
+                            <h3 class="airfield-card-name">Segelfluggelände Königsdorf</h3>
+                            <div class="airfield-card-features">
+                                <span><i class="bi bi-arrows-angle-expand"></i> 600m</span>
+                                <span><i class="bi bi-wind"></i> Winde</span>
+                            </div>
+                            <div class="airfield-card-rating">
+                                <div class="airfield-card-stars">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star"></i>
+                                </div>
+                                <span class="airfield-card-rating-text">4.2 (15 Bewertungen)</span>
+                            </div>
+                            <div class="airfield-card-footer">
+                                <div class="airfield-card-price">
+                                    ab <strong>35€</strong> / Tag
+                                </div>
+                                <div class="airfield-card-availability">
+                                    <i class="bi bi-circle-fill"></i>
+                                    <span>Verfügbar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Weitere Cards würden hier folgen (insgesamt 42) -->
+                    <!-- Für das Mockup zeigen wir nur 3 Beispiele -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-wrapper">
+                    <div class="pagination">
+                        <button class="pagination-btn"><i class="bi bi-chevron-left"></i></button>
+                        <button class="pagination-btn active">1</button>
+                        <button class="pagination-btn">2</button>
+                        <button class="pagination-btn">3</button>
+                        <button class="pagination-btn">4</button>
+                        <button class="pagination-btn">5</button>
+                        <button class="pagination-btn"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Filter Toggle Button -->
+        <button class="mobile-filter-toggle" id="mobileFilterToggle">
+            <i class="bi bi-funnel-fill"></i>
+        </button>
+
+        <!-- Filter Overlay for Mobile -->
+        <div class="filter-overlay" id="filterOverlay"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="fc-footer">
+        <div class="fc-footer-inner">
+            <div class="fc-footer-grid">
+                <div class="fc-footer-brand">
+                    <h3>Fliegercamp</h3>
+                    <p>
+                        Gastgeber teilen ihre Plätze für begrenzte Zeiträume,
+                        Vereine planen Fluglager ohne endlose Telefonketten.
+                    </p>
+                </div>
+
+                <div class="fc-footer-col">
+                    <h4>Entdecken</h4>
+                    <ul class="fc-footer-links">
+                        <li><a href="flugplaetze_liste.html">Alle Flugplätze</a></li>
+                        <li><a href="#">Fluglager finden</a></li>
+                        <li><a href="#">Fertige Routen</a></li>
+                    </ul>
+                </div>
+
+                <div class="fc-footer-col">
+                    <h4>Für Gastgeber</h4>
+                    <ul class="fc-footer-links">
+                        <li><a href="mein_flugplatz.html">Flugplatz verwalten</a></li>
+                        <li><a href="#">Fluglager anbieten</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="fc-footer-bottom">
+                <div>© 2025 Fliegercamp. Alle Rechte vorbehalten.</div>
+                <div class="fc-footer-social">
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" aria-label="Envelope"><i class="bi bi-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/main_logout.js"></script>
+
+    <script>
+        // Runway Length Slider
+        const runwaySlider = document.getElementById('runwayLength');
+        const runwayValue = document.getElementById('runwayLengthValue');
+        runwaySlider.addEventListener('input', function() {
+            runwayValue.textContent = this.value + 'm';
+        });
+
+        // Price Slider
+        const priceSlider = document.getElementById('maxPrice');
+        const priceValue = document.getElementById('maxPriceValue');
+        priceSlider.addEventListener('input', function() {
+            priceValue.textContent = this.value + '€';
+        });
+
+        // Mobile Filter Toggle
+        const mobileFilterToggle = document.getElementById('mobileFilterToggle');
+        const filterSidebar = document.getElementById('filterSidebar');
+        const filterOverlay = document.getElementById('filterOverlay');
+
+        mobileFilterToggle.addEventListener('click', function() {
+            filterSidebar.classList.add('active');
+            filterOverlay.classList.add('active');
+        });
+
+        filterOverlay.addEventListener('click', function() {
+            filterSidebar.classList.remove('active');
+            filterOverlay.classList.remove('active');
+        });
+
+        // Reset Filters
+        document.getElementById('resetFilters').addEventListener('click', function() {
+            document.querySelectorAll('.filter-input').forEach(input => input.value = '');
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = checkbox.name === 'startart';
+            });
+            runwaySlider.value = 600;
+            runwayValue.textContent = '600m';
+            priceSlider.value = 100;
+            priceValue.textContent = '100€';
+        });
+
+        // Toggle Favorite
+        function toggleFavorite(button) {
+            button.classList.toggle('active');
+            const icon = button.querySelector('i');
+            if (button.classList.contains('active')) {
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+            } else {
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+            }
+        }
+
+        // View Toggle
+        document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                // Hier würde die View-Logik implementiert werden
+            });
+        });
+
+        // Sort Select
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            console.log('Sortierung geändert:', this.value);
+            // Hier würde die Sort-Logik implementiert werden
+        });
+    </script>
+</body>
+</html>

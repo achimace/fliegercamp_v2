@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mein Flugplatz - Fliegercamp</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Projekt-Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+
+    <style>
+        /* Sticky Footer Styles */
+        .sticky-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #FFFFFF;
+            border-top: 1px solid #E5E5E5;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1020;
+            padding: 1rem 0;
+        }
+
+        .sticky-footer-inner {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        /* Platz für sticky Footer schaffen */
+        main {
+            padding-bottom: 100px;
+        }
+
+        /* Button im Footer */
+        .sticky-footer .button {
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Responsive: auf Mobile zentriert */
+        @media (max-width: 768px) {
+            .sticky-footer-inner {
+                justify-content: center;
+            }
+
+            .sticky-footer .button {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body data-active-nav="flugplatz">
+    <!-- Globale Navigation -->
+    <div id="global-layout"></div>
+
+    <main class="flex-grow-1">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-custom">
+            <a class="breadcrumb-item-custom" href="/">
+                <i class="bi bi-house-door"></i><span>Home</span>
+            </a>
+            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-item-custom">Mein Flugplatz</span>
+        </div>
+
+        <div class="page-container">
+            <!-- Header -->
+            <header class="page-header">
+                <h1 class="page-title">Mein Flugplatz</h1>
+            </header>
+
+            <!-- Abschnitt: Allgemeine Informationen -->
+            <section class="section">
+                <div class="mb-4">
+                    <h2 class="section-title">Allgemeine Informationen</h2>
+                    <p class="section-description">
+                        Beschreibe deinen Flugplatz und was er den Gästen bietet.
+                    </p>
+                </div>
+
+                <form id="generalInfoForm">
+                    <!-- Flugplatztyp -->
+                    <div class="mb-4">
+                        <label class="form-label">Wofür ist dein Flugplatz geeignet?</label>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="airfield_type" value="segelflug">
+                                    <span class="checkbox-label">Segelflug</span>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="airfield_type" value="motorflug">
+                                    <span class="checkbox-label">Motorflug</span>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="airfield_type" value="ultraleicht">
+                                    <span class="checkbox-label">Ultraleicht</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Startarten -->
+                    <div class="mb-4">
+                        <label class="form-label">Welche Startarten sind möglich?</label>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="launch_type" value="windenschlepp">
+                                    <span class="checkbox-label">Windenschlepp</span>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="launch_type" value="f_schlepp">
+                                    <span class="checkbox-label">F-Schlepp</span>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="launch_type" value="eigenstarter">
+                                    <span class="checkbox-label">Eigenstarter</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Name -->
+                    <div class="mb-4">
+                        <label class="form-label" for="airfieldName">
+                            Flugplatz Name <span class="required">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="airfieldName"
+                            name="airfieldName"
+                            class="form-control"
+                            placeholder="z. B. Flugplatz Ohlstadt"
+                            required>
+                    </div>
+
+                    <!-- Beschreibung -->
+                    <div class="mb-4">
+                        <label class="form-label" for="description">
+                            Beschreibung <span class="required">*</span>
+                        </label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            class="form-control"
+                            rows="4"
+                            placeholder="Beschreibe deinen Flugplatz, damit Gäste wissen, was sie erwartet."
+                            required></textarea>
+                    </div>
+
+                    <!-- Bilder -->
+                    <div class="mb-4">
+                        <label class="form-label">Bilder</label>
+                        <label for="airfieldImages" class="file-upload-area">
+                            <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <div class="file-upload-text">Klicke hier, um Bilder auszuwählen</div>
+                            <div class="file-upload-hint">
+                                oder ziehe Dateien hierher (max. 10 Bilder, je 5 MB)
+                            </div>
+                            <input type="file" id="airfieldImages" name="airfieldImages"
+                                   class="file-input" accept="image/*" multiple>
+                        </label>
+                        <div class="image-preview-grid" id="imagePreviewGrid"></div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Abschnitt: Adresse & Koordinaten -->
+            <section class="section">
+                <div class="mb-4">
+                    <h2 class="section-title">Adresse und Koordinaten</h2>
+                    <p class="section-description">Gib die genaue Lage deines Flugplatzes an.</p>
+                </div>
+
+                <form id="addressForm">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Straße</label>
+                            <input type="text" class="form-control" id="street" placeholder="Straße">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">PLZ</label>
+                            <input type="text" class="form-control" id="postalCode" placeholder="PLZ">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Ort</label>
+                            <input type="text" class="form-control" id="city" placeholder="Ort">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Land</label>
+                            <input type="text" class="form-control" id="country"
+                                   placeholder="Land" value="Deutschland">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Koordinaten</label>
+                            <input type="text" class="form-control" id="coordinates"
+                                   placeholder="z. B. 47.656 N, 11.242 E">
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Abschnitt: Details -->
+            <section class="section">
+                <div class="mb-4">
+                    <h2 class="section-title">Details</h2>
+                    <p class="section-description">
+                        Weitere wichtige Informationen zu deinem Flugplatz.
+                    </p>
+                </div>
+
+                <form id="detailsForm">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Größe der Gastgruppe</label>
+                            <input type="number" class="form-control" id="groupSize" placeholder="Personen">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Anzahl Flugzeuge</label>
+                            <input type="number" class="form-control" id="aircraftCount" placeholder="Flugzeuge">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Eigene Schleppmaschine möglich?</label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="radio-card">
+                                        <input type="radio" name="ownTowPlane" value="ja">
+                                        <span class="radio-label">Ja</span>
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="radio-card">
+                                        <input type="radio" name="ownTowPlane" value="nein">
+                                        <span class="radio-label">Nein</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Hallenplätze</label>
+                            <input type="number" class="form-control" id="hangarSpaces"
+                                   placeholder="Anzahl Hallenplätze">
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Abschnitt: Ausstattung -->
+            <section class="section">
+                <div class="mb-4">
+                    <h2 class="section-title">Ausstattung</h2>
+                    <p class="section-description">
+                        Wähle aus, welche Ausstattung dein Flugplatz bietet.
+                    </p>
+                </div>
+
+                <form id="amenitiesForm">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="amenity" value="camping">
+                                <span class="checkbox-label">Campingplatz</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="amenity" value="duschen">
+                                <span class="checkbox-label">Duschen</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="amenity" value="toiletten">
+                                <span class="checkbox-label">Toiletten</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="amenity" value="strom">
+                                <span class="checkbox-label">Stromanschluss</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="amenity" value="kueche">
+                                <span class="checkbox-label">Küche vorhanden</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="amenity" value="grill">
+                                <span class="checkbox-label">Grillstelle</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <!-- Sticky Footer mit Speichern-Button -->
+    <footer class="sticky-footer">
+        <div class="sticky-footer-inner">
+            <button type="button" id="saveAllButton" class="button button-primary">
+                <i class="bi bi-save"></i>
+                Alle Änderungen speichern
+            </button>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Gemeinsame Navigation & Funktionen -->
+    <script src="assets/main.js"></script>
+
+    <!-- Seitenspezifische Logik -->
+    <script src="assets/js/flugplatz.js"></script>
+
+    <script>
+        // Globaler Speichern-Button Handler
+        document.getElementById('saveAllButton')?.addEventListener('click', async function() {
+            const btn = this;
+            const originalHTML = btn.innerHTML;
+            
+            // Button-Status auf "Speichert..." setzen
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Wird gespeichert...';
+            
+            // Alle Formulare sammeln
+            const forms = [
+                document.getElementById('generalInfoForm'),
+                document.getElementById('addressForm'),
+                document.getElementById('detailsForm'),
+                document.getElementById('amenitiesForm')
+            ].filter(form => form !== null);
+            
+            // Validierung aller Formulare
+            let allValid = true;
+            for (const form of forms) {
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    allValid = false;
+                    break;
+                }
+            }
+            
+            if (!allValid) {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+                return;
+            }
+            
+            // Simuliere Speichervorgang (in Produktion: API-Call)
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Erfolg anzeigen
+                btn.innerHTML = '<i class="bi bi-check-lg"></i> Gespeichert!';
+                btn.classList.remove('button-primary');
+                btn.classList.add('button-success');
+                
+                // Optional: Erfolgsmeldung oben auf der Seite
+                showSuccessMessage('Alle Änderungen wurden erfolgreich gespeichert.');
+                
+                // Nach 2 Sekunden zurück zum normalen Zustand
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                    btn.classList.remove('button-success');
+                    btn.classList.add('button-primary');
+                }, 2000);
+                
+            } catch (error) {
+                // Fehler anzeigen
+                btn.innerHTML = '<i class="bi bi-x-lg"></i> Fehler beim Speichern';
+                btn.classList.remove('button-primary');
+                btn.classList.add('button-danger');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                    btn.classList.remove('button-danger');
+                    btn.classList.add('button-primary');
+                }, 3000);
+            }
+        });
+        
+        // Hilfsfunktion für Erfolgsmeldung
+        function showSuccessMessage(message) {
+            const alertBox = document.createElement('div');
+            alertBox.className = 'alert-box alert-success-box';
+            alertBox.style.position = 'fixed';
+            alertBox.style.top = '80px';
+            alertBox.style.right = '1rem';
+            alertBox.style.zIndex = '9999';
+            alertBox.style.maxWidth = '400px';
+            alertBox.style.animation = 'slideInRight 0.3s ease-out';
+            
+            alertBox.innerHTML = `
+                <div class="alert-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="alert-content">
+                    <div class="alert-title">Erfolgreich gespeichert</div>
+                    <div>${message}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(alertBox);
+            
+            setTimeout(() => {
+                alertBox.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => alertBox.remove(), 300);
+            }, 3000);
+        }
+        
+        // Inline CSS für Animation
+        if (!document.getElementById('saveAllAnimations')) {
+            const style = document.createElement('style');
+            style.id = 'saveAllAnimations';
+            style.textContent = `
+                @keyframes slideInRight {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                
+                @keyframes slideOutRight {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fliegercamp – Außergewöhnliche Flugplätze & Fluglager</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Projekt Styles (globale Typo, Farben, Navbar, Cards etc.) -->
+    <link rel="stylesheet" href="assets/styles.css">
+
+    <style>
+        /* Seiten-spezifische Layout-Helfer für die Homepage */
+
+        /* HERO-BEREICH */
+        .fc-hero {
+            position: relative;
+            width: 100%;
+            min-height: 480px;
+            background-image:
+                linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+                url("https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1600");
+            background-size: cover;
+            background-position: center center;
+            color: #fff;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .fc-hero {
+                min-height: 560px;
+            }
+        }
+
+        .fc-hero-inner {
+            position: relative;
+            z-index: 1;
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .fc-hero-headline {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .fc-hero-headline {
+                font-size: 3rem;
+                font-weight: 700;
+            }
+        }
+
+        .fc-hero-sub {
+            max-width: 600px;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .fc-hero-sub {
+                font-size: 1.125rem;
+            }
+        }
+
+        /* Suchbox im Hero */
+        .fc-searchbox {
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            padding: 1rem 1rem;
+            max-width: 700px;
+        }
+
+        @media (min-width: 768px) {
+            .fc-searchbox {
+                padding: 1.25rem 1.25rem;
+            }
+        }
+
+        .fc-search-field {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .fc-search-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #737373;
+            margin-bottom: 0.25rem;
+        }
+
+        .fc-search-input,
+        .fc-search-select {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 0.875rem;
+            color: #000;
+            padding: 0.25rem 0;
+        }
+
+        .fc-search-input::placeholder {
+            color: #A3A3A3;
+        }
+
+        .fc-search-btn {
+            background: #FF385C;
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .fc-search-btn i {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        /* SCROLLER / GRID ABSCHNITTE */
+        .fc-section-wrapper {
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+
+        .fc-section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            row-gap: 1rem;
+        }
+
+        .fc-section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        @media (min-width: 768px) {
+            .fc-section-title {
+                font-size: 2rem;
+            }
+        }
+
+        .fc-section-icon {
+            font-size: 2rem;
+            color: #737373;
+        }
+
+        /* horizontales Scrolling auf Mobile, Grid auf Desktop */
+        .fc-card-track {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .fc-card-track::-webkit-scrollbar {
+            height: 8px;
+        }
+        .fc-card-track::-webkit-scrollbar-track {
+            background: #F5F5F5;
+            border-radius: 4px;
+        }
+        .fc-card-track::-webkit-scrollbar-thumb {
+            background: #D4D4D4;
+            border-radius: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .fc-card-track {
+                display: grid;
+                overflow-x: visible;
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .fc-card-track {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Jede Card ist klickbar und lehnt sich an dein Platz-/Routen-Card-Design an */
+        .fc-card {
+            min-width: 280px;
+            scroll-snap-align: start;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: transform 0.2s;
+        }
+
+        @media (min-width: 768px) {
+            .fc-card:hover {
+                transform: translateY(-4px);
+            }
+        }
+
+        .fc-card-imgwrap {
+            position: relative;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            height: 250px;
+            margin-bottom: 0.75rem;
+            background: #ccc;
+        }
+
+        .fc-card-imgwrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .fc-card-badge {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            background: #fff;
+            color: #000;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .fc-card-fav {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .fc-card-fav i {
+            font-size: 1rem;
+            line-height: 1;
+            color: #000;
+        }
+
+        .fc-card-body {
+            padding: 0.5rem 0;
+        }
+
+        .fc-card-location {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 0.25rem;
+        }
+
+        .fc-card-title {
+            font-size: 0.875rem;
+            color: #737373;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .fc-card-meta-icons {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #737373;
+        }
+
+        .fc-card-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+            color: #000;
+        }
+
+        .fc-card-rating i {
+            color: #000;
+        }
+
+        .fc-card-extra {
+            font-size: 0.875rem;
+            color: #000;
+        }
+
+        .fc-card-extra strong {
+            font-weight: 600;
+        }
+
+        .fc-view-all-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid #000;
+            background: transparent;
+            color: #000;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .fc-view-all-btn:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Planner Promo Abschnitt */
+        .fc-planner-section {
+            width: 100%;
+            background-image:
+                linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.4)),
+                url("https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1600");
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+        }
+
+        .fc-planner-inner {
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 4rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .fc-planner-inner {
+                flex-direction: row;
+                align-items: center;
+                padding: 5rem 1rem;
+            }
+        }
+
+        .fc-planner-text {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .fc-planner-title {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .fc-planner-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        .fc-planner-desc {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            opacity: 0.95;
+        }
+
+        @media (min-width: 768px) {
+            .fc-planner-desc {
+                font-size: 1.125rem;
+            }
+        }
+
+        .fc-planner-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--color-yellow, #FFD700);
+            color: #000;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .fc-planner-phonewrap {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        @media (min-width:768px) {
+            .fc-planner-phonewrap {
+                justify-content: flex-end;
+            }
+        }
+
+        .fc-phone-mock {
+            width: 220px;
+            aspect-ratio: 9 / 19.5;
+            border-radius: 1.5rem;
+            background: #000;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            overflow: hidden;
+            border: 8px solid #1a1a1a;
+        }
+
+        @media (min-width:768px) {
+            .fc-phone-mock {
+                width: 260px;
+            }
+        }
+
+        .fc-phone-mock img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Footer-lightweight für Mockup */
+        .fc-footer {
+            background: #000;
+            color: #fff;
+            margin-top: 4rem;
+        }
+
+        .fc-footer-inner {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+
+        .fc-footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width:768px) {
+            .fc-footer-grid {
+                grid-template-columns: 2fr 1fr 1fr;
+            }
+        }
+
+        .fc-footer-brand h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #fff;
+        }
+
+        .fc-footer-brand p {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.7);
+            margin: 0;
+        }
+
+        .fc-footer-col h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.75rem;
+        }
+
+        .fc-footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .fc-footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .fc-footer-links a {
+            font-size: 0.875rem;
+            line-height: 1.4;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .fc-footer-links a:hover {
+            color: #fff;
+        }
+
+        .fc-footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.15);
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+        }
+
+        @media (min-width:768px) {
+            .fc-footer-bottom {
+                text-align: left;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .fc-footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width:768px) {
+            .fc-footer-social {
+                margin-top: 0;
+                justify-content: flex-end;
+            }
+        }
+
+        .fc-footer-social a {
+            color: rgba(255,255,255,0.6);
+            font-size: 1.25rem;
+            text-decoration: none;
+        }
+
+        .fc-footer-social a:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body data-active-nav="">
+    <!-- Globale Navigation (Header / Offcanvas wird hier via main.js eingefügt) -->
+    <div id="global-layout"></div>
+
+    <main class="flex-grow-1">
+
+        <!-- HERO -->
+        <section class="fc-hero">
+            <div class="fc-hero-inner">
+
+                <h1 class="fc-hero-headline">
+                    Flugplätze finden. Fluglager planen. Gemeinsam fliegen.
+                </h1>
+
+                <p class="fc-hero-sub">
+                    Fliegercamp verbindet gastfreundliche Flugplätze mit Segelfluggruppen.
+                    Finde Grasstreifen wie die „Obstwiese hinterm Nordseeteich“, plane dein
+                    nächstes Fluglager und bring deine Staffel an Orte, von denen sonst
+                    nur die Platzhirsche wissen.
+                </p>
+
+                <div class="fc-searchbox">
+                    <div class="d-flex flex-column flex-md-row gap-3 align-items-stretch">
+                        <div class="fc-search-field">
+                            <label class="fc-search-label" for="search-destination">Wohin soll's gehen?</label>
+                            <input
+                                class="fc-search-input"
+                                type="text"
+                                id="search-destination"
+                                placeholder="z. B. Nordsee, Allgäu, Schwarzwald …">
+                        </div>
+
+                        <div class="fc-search-field" style="border-left:1px solid #E5E5E5; padding-left:1rem;">
+                            <label class="fc-search-label" for="search-type">Flugzeugtyp</label>
+                            <select class="fc-search-select" id="search-type">
+                                <option>Alle Flugzeuge</option>
+                                <option>Segelflugzeug</option>
+                                <option>Eigenstarter</option>
+                                <option>UL / LSA</option>
+                            </select>
+                        </div>
+
+                        <button class="fc-search-btn">
+                            <i class="bi bi-search"></i>
+                            <span>Suchen</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: Beliebte Flugplätze -->
+        <section class="fc-section-wrapper">
+            <div class="fc-section-head">
+                <div>
+                    <h2 class="fc-section-title">Beliebte Flugplätze in Deutschland</h2>
+                    <div style="font-size:0.875rem; color:#525252; line-height:1.4;">
+                        Gastgeber öffnen ihre Plätze für Segelfluggruppen, oft nur für wenige Wochen pro Jahr.
+                        Hier ist eine Auswahl, die aktuell Anfragen annimmt.
+                    </div>
+                </div>
+                <i class="bi bi-airplane-fill fc-section-icon d-none d-md-block"></i>
+            </div>
+
+            <div class="fc-card-track">
+
+                <!-- Card: Nordsee -->
+                <a class="fc-card" href="flugplatz_oeffentlich_v2.html">
+                    <div class="fc-card-imgwrap">
+                        <span class="fc-card-badge">Neu</span>
+                        <button class="fc-card-fav" aria-label="merken"><i class="bi bi-heart"></i></button>
+                        <img src="https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?w=800"
+                             alt="Obstwiese hinterm Nordseeteich">
+                    </div>
+                    <div class="fc-card-body">
+                        <div class="fc-card-location">Otterndorf, Niedersachsen</div>
+                        <div class="fc-card-title">Obstwiese hinterm Nordseeteich</div>
+                        <div class="fc-card-meta-icons">
+                            <i class="bi bi-reception-4" title="Funkkontakt möglich"></i>
+                            <i class="bi bi-droplet-fill" title="Wasser für Ballast"></i>
+                            <i class="bi bi-plug-fill" title="Stromanschluss am Platz"></i>
+                        </div>
+                        <div class="fc-card-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <span><strong>Neu</strong> auf Fliegercamp</span>
+                        </div>
+                        <div class="fc-card-extra">
+                            <strong>21 m</strong> Spannweite • <strong>3</strong> Lager möglich
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card: Allgäu -->
+                <a class="fc-card" href="#">
+                    <div class="fc-card-imgwrap">
+                        <span class="fc-card-badge" style="background:#10B981; color:#fff;">Sofort buchbar</span>
+                        <button class="fc-card-fav" aria-label="merken"><i class="bi bi-heart"></i></button>
+                        <img src="https://images.unsplash.com/photo-1473773508845-188df298d2d1?w=800"
+                             alt="Bergwiese mit Alpenblick">
+                    </div>
+                    <div class="fc-card-body">
+                        <div class="fc-card-location">Oberallgäu, Bayern</div>
+                        <div class="fc-card-title">Bergwiese mit Alpenpanorama</div>
+                        <div class="fc-card-meta-icons">
+                            <i class="bi bi-reception-4" title="Funkkontakt möglich"></i>
+                            <i class="bi bi-car-front-fill" title="Zufahrt mit Hänger"></i>
+                            <i class="bi bi-house-fill" title="Unterkunft verfügbar"></i>
+                        </div>
+                        <div class="fc-card-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <span><strong>5.0</strong> (12)</span>
+                        </div>
+                        <div class="fc-card-extra">
+                            <strong>18 m</strong> Spannweite • <strong>2</strong> Lager
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card: Schwarzwald -->
+                <a class="fc-card" href="#">
+                    <div class="fc-card-imgwrap">
+                        <button class="fc-card-fav" aria-label="merken"><i class="bi bi-heart"></i></button>
+                        <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800"
+                             alt="Schwarzwald Hochplateau">
+                    </div>
+                    <div class="fc-card-body">
+                        <div class="fc-card-location">Schwarzwald, Baden-Württemberg</div>
+                        <div class="fc-card-title">Hochplateau am Waldrand</div>
+                        <div class="fc-card-meta-icons">
+                            <i class="bi bi-reception-4" title="Funkkontakt möglich"></i>
+                            <i class="bi bi-droplet-fill" title="Wasser verfügbar"></i>
+                        </div>
+                        <div class="fc-card-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <span><strong>4.8</strong> (23)</span>
+                        </div>
+                        <div class="fc-card-extra">
+                            <strong>20 m</strong> Spannweite • <strong>4</strong> Lager
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card: Ostsee -->
+                <a class="fc-card" href="#">
+                    <div class="fc-card-imgwrap">
+                        <button class="fc-card-fav" aria-label="merken"><i class="bi bi-heart"></i></button>
+                        <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800"
+                             alt="Strandwiese an der Ostsee">
+                    </div>
+                    <div class="fc-card-body">
+                        <div class="fc-card-location">Rügen, Mecklenburg-Vorpommern</div>
+                        <div class="fc-card-title">Strandwiese an der Ostsee</div>
+                        <div class="fc-card-meta-icons">
+                            <i class="bi bi-reception-4" title="Funkkontakt möglich"></i>
+                            <i class="bi bi-wifi" title="WLAN am Platz"></i>
+                            <i class="bi bi-ev-station-fill" title="E-Auto laden"></i>
+                        </div>
+                        <div class="fc-card-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <span><strong>4.9</strong> (31)</span>
+                        </div>
+                        <div class="fc-card-extra">
+                            <strong>22 m</strong> Spannweite • <strong>5</strong> Lager
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+
+            <div class="text-center">
+                <a href="#" class="fc-view-all-btn">
+                    <span>Alle Flugplätze ansehen</span>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- SECTION: Fluglager-Planer -->
+        <section class="fc-planner-section">
+            <div class="fc-planner-inner">
+
+                <div class="fc-planner-text">
+                    <h2 class="fc-planner-title">Fluglager-Planer</h2>
+                    <p class="fc-planner-desc">
+                        Wo fliegen wir hin? Wer schleppt wen? Wo können wir campen?
+                        Der Fluglager-Planer hilft dir, dein Vereinslager oder Wandersegelflug
+                        in wenigen Minuten zu strukturieren – mit echten Plätzen wie
+                        „Obstwiese hinterm Nordseeteich“ statt Fantasie-Landewiesen.
+                    </p>
+                    <a href="#" class="fc-planner-btn">
+                        <span>Fluglager planen</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="fc-planner-phonewrap">
+                    <div class="fc-phone-mock">
+                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400"
+                             alt="Mobile Mockup Fluglager-Planer">
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION: Beispiel-Routen -->
+        <section class="fc-section-wrapper" style="padding-top:3rem;">
+            <div class="fc-section-head">
+                <div>
+                    <h2 class="fc-section-title">Fertige Routen für dein nächstes Lager</h2>
+                    <div style="font-size:0.875rem; color:#525252; line-height:1.4;">
+                        Mehrtägige Touren, die schon mal jemand geflogen ist. Mit Streckenlänge,
+                        Stopps, Übernachtungsideen und typischer Thermik.
+                    </div>
+                </div>
+            </div>
+
+            <div class="fc-card-track">
+
+                <!-- Route Alpen -->
+                <a class="fc-card" href="#">
+                    <div class="fc-card-imgwrap">
+                        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"
+                             alt="Alpenroute">
+                    </div>
+                    <div class="fc-card-body">
+                        <div class="fc-card-location">Süddeutschland / Alpen</div>
+                        <div class="fc-card-title">Alpen-Runde: Voralpenkante bis Vorarlberg</div>
+                        <div class="fc-card-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <span><strong>5.0</strong> (45)</span>
+                        </div>
+                        <div class="fc-card-extra">
+                            <strong>5 Stops</strong> • 420 km • <strong>4 Tage</strong>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Route Küste -->
+                <a class="fc-card" href="#">
+                    <div class="fc-card-imgwrap">
+                        <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800"
+                             alt="Nord-/Ostsee-Route">
+                    </div>
+                    <div class="fc-card-body">
+                        <div class="fc-card-location">Nord- & Ostsee</div>
+                        <div class="fc-card-title">Küsten-Tour: Nordsee, Inseln & Ostsee</div>
+                        <div class="fc-card-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <span><strong>4.9</strong> (32)</span>
+                        </div>
+                        <div class="fc-card-extra">
+                            <strong>6 Stops</strong> • 580 km • <strong>5 Tage</strong>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Route Mittelgebirge -->
+                <a class="fc-card" href="#">
+                    <div class="fc-card-imgwrap">
+                        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"
+                             alt="Mittelgebirge Rundtour">
+                    </div>
+                    <div class="fc-card-body">
+                        <div class="fc-card-location">Eifel bis Schwarzwald</div>
+                        <div class="fc-card-title">Mittelgebirge-Klassiker für Vereinslager</div>
+                        <div class="fc-card-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <span><strong>4.8</strong> (28)</span>
+                        </div>
+                        <div class="fc-card-extra">
+                            <strong>4 Stops</strong> • 350 km • <strong>3 Tage</strong>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+
+            <div class="text-center">
+                <a href="#" class="fc-view-all-btn">
+                    <span>Mehr Routen ansehen</span>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="fc-footer">
+            <div class="fc-footer-inner">
+                <div class="fc-footer-grid">
+
+                    <div class="fc-footer-brand">
+                        <h3>Fliegercamp</h3>
+                        <p>
+                            Wir bringen Piloten und Flugplätze zusammen.
+                            Gastgeber teilen ihre Plätze für begrenzte Zeiträume,
+                            Vereine planen Fluglager ohne endlose Telefonketten.
+                        </p>
+                    </div>
+
+                    <div class="fc-footer-col">
+                        <h4>Entdecken</h4>
+                        <ul class="fc-footer-links">
+                            <li><a href="#">Alle Flugplätze</a></li>
+                            <li><a href="#">Fluglager finden</a></li>
+                            <li><a href="#">Fertige Routen</a></li>
+                            <li><a href="#">Fluglager-Planer</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="fc-footer-col">
+                        <h4>Für Gastgeber</h4>
+                        <ul class="fc-footer-links">
+                            <li><a href="mein_flugplatz.html">Mein Flugplatz verwalten</a></li>
+                            <li><a href="mein_fluglager.html">Fluglager anbieten</a></li>
+                            <li><a href="mein_profil.html">Profil & Bewertungen</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <div class="fc-footer-bottom">
+                    <div>© 2025 Fliegercamp. Alle Rechte vorbehalten.</div>
+                    <div class="fc-footer-social">
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Envelope"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Bootstrap Bundle (mit Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Globale Logik: lädt components/nav.html in #global-layout, markiert aktiven Menüpunkt etc. -->
+    <script src="assets/main_logout.js"></script>
+
+    <!-- Hinweis:
+         Diese Seite braucht aktuell keine eigene JS-Datei wie flugplatz_oeffentlich.js,
+         weil hier nichts Interaktives initialisiert werden muss.
+         Falls du später "Suchen" echt machen willst, kannst du z. B.
+         assets/js/homepage.js anlegen und hier einbinden. -->
+</body>
+</html>

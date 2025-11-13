@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meine Fluglager-Anfragen - Fliegercamp</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Projekt-Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+
+    <style>
+        /* Layout-Grid für Dreiteilung */
+        .organizer-layout {
+            display: grid;
+            grid-template-columns: 25% 45% 30%;
+            gap: 1.5rem;
+            height: calc(100vh - 140px);
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Responsive Anpassungen */
+        @media (max-width: 1280px) {
+            .organizer-layout {
+                grid-template-columns: 40% 60%;
+            }
+            .chat-panel {
+                display: none;
+            }
+            .detail-panel {
+                display: flex;
+                flex-direction: column;
+            }
+            .mobile-tabs-container {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .organizer-layout {
+                display: none !important;
+            }
+            .mobile-tabs-wrapper {
+                display: block !important;
+            }
+            .requests-panel-mobile {
+                max-height: 400px;
+                overflow-y: auto;
+            }
+        }
+
+        /* Mobile Tabs Wrapper */
+        .mobile-tabs-wrapper {
+            display: none;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .mobile-tabs-nav {
+            display: flex;
+            border-bottom: 2px solid #E5E5E5;
+            margin-bottom: 1rem;
+            background: #fff;
+            border-radius: 0.5rem 0.5rem 0 0;
+            overflow-x: auto;
+        }
+
+        .mobile-tab-button {
+            flex: 1;
+            min-width: 120px;
+            padding: 1rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            color: #737373;
+            white-space: nowrap;
+        }
+
+        .mobile-tab-button.active {
+            border-bottom-color: #000;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .mobile-tab-button:hover {
+            background: #F8F7F4;
+            color: #000;
+        }
+
+        .mobile-tab-content {
+            display: none;
+        }
+
+        .mobile-tab-content.active {
+            display: block;
+        }
+
+        /* Mobile Camp Selector */
+        .camp-selector-mobile {
+            margin-bottom: 1rem;
+        }
+
+        /* Linke Spalte: Anfrageliste */
+        .requests-panel {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .requests-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .request-list-card {
+            background: #fff;
+            border: 2px solid #E5E5E5;
+            border-left: 3px solid transparent;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .request-list-card:hover {
+            border-color: #D4D4D4;
+            border-left-color: #000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateX(2px);
+        }
+
+        .request-list-card.active {
+            border-color: #000;
+            border-left-color: #FFD700;
+            border-left-width: 4px;
+            background: #F8F7F4;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .request-card-header-small {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .request-card-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #000;
+            margin-bottom: 0.25rem;
+        }
+
+        .request-card-location {
+            font-size: 0.75rem;
+            color: #737373;
+        }
+
+        .request-card-date {
+            font-size: 0.75rem;
+            color: #525252;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .chat-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #EF4444;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.625rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Status Badges mit Tooltips */
+        .status-badge-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .status-badge-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #171717;
+            color: #fff;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            margin-bottom: 0.5rem;
+            z-index: 1000;
+        }
+
+        .status-badge-wrapper:hover .status-badge-tooltip {
+            opacity: 1;
+        }
+
+        /* Badge Styles */
+        .badge-custom {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #F5F5F5;
+            color: #737373;
+            border: 1px solid #E5E5E5;
+        }
+
+        .badge-pending {
+            background: #FEF3C7;
+            color: #B45309;
+            border-color: #FCD34D;
+        }
+
+        .badge-confirmed {
+            background: #D1FAE5;
+            color: #065F46;
+            border-color: #6EE7B7;
+        }
+
+        .badge-error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border-color: #FCA5A5;
+        }
+
+        /* Mittlere Spalte: Detail Panel */
+        .detail-panel {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E5E5E5;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .detail-header-info {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .detail-airfield-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: #737373;
+        }
+
+        .detail-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-meta-item i {
+            font-size: 1rem;
+        }
+
+        .detail-header-actions {
+            flex-shrink: 0;
+        }
+
+        .btn-select-final {
+            padding: 0.75rem 1.5rem;
+            background: #FFD700;
+            color: #000;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-select-final:hover {
+            background: #FFC700;
+            box-shadow: 0 4px 6px rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-select-final:active {
+            transform: translateY(0);
+        }
+
+        .detail-scrollable {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .detail-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .detail-section {
+            background: #F8F7F4;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .detail-section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+
+        .form-row-inline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group-inline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label-inline {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #737373;
+        }
+
+        .form-input-inline {
+            padding: 0.75rem;
+            border: 1px solid #E5E5E5;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: #000;
+            background: #fff;
+            transition: all 0.2s;
+        }
+
+        .form-input-inline:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-input-inline:disabled {
+            background: #F5F5F5;
+            color: #A3A3A3;
+            cursor: not-allowed;
+        }
+
+        .detail-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #E5E5E5;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1rem;
+            text-align: center;
+            color: #737373;
+            height: 100%;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            color: #D4D4D4;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #404040;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state-text {
+            font-size: 0.875rem;
+            max-width: 400px;
+        }
+
+        /* Chat Panel */
+        .chat-panel {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-panel-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .chat-panel-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #000;
+            margin: 0;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 80%;
+        }
+
+        .chat-message.sent {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .chat-message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #FFD700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .chat-message.received .chat-message-avatar {
+            background: #F8F7F4;
+            color: #000;
+        }
+
+        .chat-message-content {
+            flex: 1;
+        }
+
+        .chat-message-bubble {
+            background: #F8F7F4;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #000;
+            word-wrap: break-word;
+        }
+
+        .chat-message.sent .chat-message-bubble {
+            background: #FFD700;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .chat-message.received .chat-message-bubble {
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .chat-message-time {
+            font-size: 0.75rem;
+            color: #A3A3A3;
+            margin-top: 0.25rem;
+            padding: 0 0.5rem;
+        }
+
+        .chat-message.sent .chat-message-time {
+            text-align: right;
+        }
+
+        .chat-panel-footer {
+            padding: 1rem;
+            border-top: 1px solid #E5E5E5;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .chat-textarea {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #E5E5E5;
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.875rem;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+        }
+
+        .chat-textarea:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-send-button {
+            padding: 0.75rem 1rem;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .chat-send-button:hover {
+            background: #171717;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-send-button i {
+            font-size: 1.25rem;
+        }
+
+        .chat-empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            color: #737373;
+        }
+
+        .chat-empty-icon {
+            font-size: 3rem;
+            color: #D4D4D4;
+            margin-bottom: 1rem;
+        }
+
+        /* Kalender Styles */
+        .calendar-widget {
+            background: #fff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .calendar-nav-btn {
+            background: transparent;
+            border: 1px solid #E5E5E5;
+            border-radius: 0.375rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .calendar-nav-btn:hover {
+            background: #F8F7F4;
+            border-color: #D4D4D4;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.25rem;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #737373;
+            padding: 0.5rem 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .calendar-day.disabled {
+            color: #D4D4D4;
+            cursor: default;
+        }
+
+        .calendar-day.available {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #6EE7B7;
+        }
+
+        .calendar-day.available:hover {
+            background: #A7F3D0;
+        }
+
+        .calendar-day.booked {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FCA5A5;
+        }
+
+        .calendar-day.today {
+            background: #FFD700;
+            color: #000;
+            font-weight: 600;
+            border: 2px solid #000;
+        }
+
+        /* Camp Selector */
+        .camp-selector {
+            margin-bottom: 1.5rem;
+        }
+
+        .camp-selector-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #737373;
+            margin-bottom: 0.5rem;
+        }
+
+        .camp-selector-dropdown {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E5E5;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-family: 'Poppins', sans-serif;
+            color: #000;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .camp-selector-dropdown:hover {
+            border-color: #D4D4D4;
+        }
+
+        .camp-selector-dropdown:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Button Group */
+        .btn-group-custom {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        /* Primary Button im Header */
+        .button.button-primary:first-child {
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .btn-select-final {
+                font-size: 0.75rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        /* Info-Box Styles */
+        .info-box {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            border: 1px solid;
+        }
+
+        .info-box.info {
+            background: #DBEAFE;
+            border-color: #3B82F6;
+        }
+
+        .info-box.warning {
+            background: #FEF3C7;
+            border-color: #F59E0B;
+        }
+
+        .info-box.success {
+            background: #D1FAE5;
+            border-color: #10B981;
+        }
+
+        .info-box.error {
+            background: #FEE2E2;
+            border-color: #EF4444;
+        }
+
+        .info-box-icon {
+            flex-shrink: 0;
+            font-size: 1.25rem;
+        }
+
+        .info-box-content {
+            flex: 1;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-box-text {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Modal für finale Flugplatzauswahl */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 0.75rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #000;
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-description {
+            font-size: 0.875rem;
+            color: #737373;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-airfield-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-airfield-card {
+            display: block;
+            padding: 1rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .modal-airfield-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .modal-airfield-card:hover {
+            border-color: #000;
+            background: #F8F7F4;
+        }
+
+        .modal-airfield-card.selected {
+            border-color: #FFD700;
+            border-width: 3px;
+            background: #FFFBEB;
+        }
+
+        .modal-airfield-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-airfield-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: #737373;
+        }
+
+        .modal-airfield-details span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .modal-comment-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: #F8F7F4;
+            border-radius: 0.5rem;
+        }
+
+        .modal-comment-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .modal-comment-checkbox label {
+            font-size: 0.875rem;
+            color: #000;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #E5E5E5;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Participants/Aircraft List */
+        .detail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .detail-list-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: #fff;
+            border-radius: 0.5rem;
+            border: 1px solid #E5E5E5;
+        }
+
+        .detail-list-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #FFD700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .detail-list-item-content {
+            flex: 1;
+        }
+
+        .detail-list-item-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #000;
+        }
+
+        .detail-list-item-meta {
+            font-size: 0.75rem;
+            color: #737373;
+        }
+
+        .form-textarea-inline {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #E5E5E5;
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.875rem;
+            color: #000;
+            resize: vertical;
+            min-height: 100px;
+            transition: all 0.2s;
+        }
+
+        .form-textarea-inline:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-textarea-inline:disabled {
+            background: #F5F5F5;
+            color: #A3A3A3;
+            cursor: not-allowed;
+        }
+
+        .form-error-message {
+            font-size: 0.75rem;
+            color: #EF4444;
+            margin-top: 0.25rem;
+        }
+
+        /* Button Styles mit allen States */
+        .button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease-in-out;
+            text-decoration: none;
+        }
+
+        .button:focus {
+            outline: 3px solid rgba(0, 0, 0, 0.2);
+            outline-offset: 2px;
+        }
+
+        .button-primary {
+            background: #000;
+            color: #fff;
+        }
+
+        .button-primary:hover:not(:disabled) {
+            background: #171717;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .button-primary:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-primary:disabled {
+            background: #F5F5F5;
+            color: #A3A3A3;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .button-secondary {
+            background: transparent;
+            color: #000;
+            border: 2px solid #E5E5E5;
+        }
+
+        .button-secondary:hover:not(:disabled) {
+            background: #F8F7F4;
+            border-color: #000;
+        }
+
+        .button-secondary:active:not(:disabled) {
+            background: #F5F5F5;
+        }
+
+        .button-secondary:disabled {
+            color: #A3A3A3;
+            border-color: #E5E5E5;
+            cursor: not-allowed;
+        }
+
+        .button-danger {
+            background: #EF4444;
+            color: #fff;
+        }
+
+        .button-danger:hover:not(:disabled) {
+            background: #DC2626;
+            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .button-danger:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Snackbar für Feedback */
+        .snackbar {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #171717;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            z-index: 10000;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .snackbar.success {
+            background: #10B981;
+        }
+
+        .snackbar.error {
+            background: #EF4444;
+        }
+
+        .snackbar i {
+            font-size: 1.25rem;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translate(-50%, 100%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+            to {
+                transform: translate(-50%, 100%);
+                opacity: 0;
+            }
+        }
+
+        .snackbar.hiding {
+            animation: slideDown 0.3s ease-in;
+        }
+    </style>
+</head>
+
+<body data-active-nav="fluglager">
+    <!-- Globale Navigation -->
+    <div id="global-layout"></div>
+
+    <main class="flex-grow-1">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-custom">
+            <a class="breadcrumb-item-custom" href="/">
+                <i class="bi bi-house-door"></i>
+                <span>Home</span>
+            </a>
+            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-item-custom">Meine Fluglager-Anfragen</span>
+        </div>
+
+        <!-- Mobile Tabs Wrapper (nur auf mobilen Geräten sichtbar) -->
+        <div class="mobile-tabs-wrapper">
+            <!-- Mobile Camp Selector -->
+            <div class="camp-selector-mobile">
+                <label class="camp-selector-label">Fluglager auswählen</label>
+                <select class="camp-selector-dropdown" id="campSelectorMobile">
+                    <option value="sommer" selected>Sommerfluglager 2025</option>
+                    <option value="herbst">Herbstfluglager 2025</option>
+                </select>
+            </div>
+
+            <!-- Mobile Tabs Navigation -->
+            <div class="mobile-tabs-nav">
+                <button class="mobile-tab-button active" data-mobile-tab="requests">
+                    <i class="bi bi-list-ul"></i>
+                    Anfragen
+                </button>
+                <button class="mobile-tab-button" data-mobile-tab="details">
+                    <i class="bi bi-info-circle"></i>
+                    Details
+                </button>
+                <button class="mobile-tab-button" data-mobile-tab="calendar">
+                    <i class="bi bi-calendar3"></i>
+                    Kalender
+                </button>
+            </div>
+
+            <!-- Mobile Tab Content: Anfragen -->
+            <div class="mobile-tab-content active" id="mobile-tab-requests">
+                <button class="button button-primary mb-3" style="width: 100%;">
+                    <i class="bi bi-plus-lg"></i>
+                    Weitere Flugplätze anfragen
+                </button>
+                <div class="requests-panel-mobile" id="requestsListMobile">
+                    <!-- Anfragen werden hier dynamisch eingefügt -->
+                </div>
+            </div>
+
+            <!-- Mobile Tab Content: Details -->
+            <div class="mobile-tab-content" id="mobile-tab-details">
+                <div id="detailContentMobile">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-inbox"></i>
+                        </div>
+                        <div class="empty-state-title">Keine Anfrage ausgewählt</div>
+                        <div class="empty-state-text">
+                            Wähle eine Anfrage aus, um Details anzuzeigen.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Tab Content: Kalender -->
+            <div class="mobile-tab-content" id="mobile-tab-calendar">
+                <div class="calendar-widget">
+                    <div class="calendar-header">
+                        <h3 class="calendar-title">August 2025</h3>
+                        <div class="calendar-nav">
+                            <button class="calendar-nav-btn" onclick="previousMonth()" aria-label="Vorheriger Monat">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button class="calendar-nav-btn" onclick="nextMonth()" aria-label="Nächster Monat">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="calendarContainerMobile"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Layout -->
+        <div class="organizer-layout">
+            
+            <!-- Linke Spalte: Anfrageliste -->
+            <div class="requests-panel">
+                <div style="margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0 0 0.5rem 0; color: #000;">Meine Anfragen</h2>
+                </div>
+
+                <div class="camp-selector">
+                    <label class="camp-selector-label">Fluglager auswählen</label>
+                    <select class="camp-selector-dropdown" id="campSelector">
+                        <option value="sommer" selected>Sommerfluglager 2025</option>
+                        <option value="herbst">Herbstfluglager 2025</option>
+                    </select>
+                </div>
+
+                <button class="button button-primary mb-3" style="width: 100%;">
+                    <i class="bi bi-plus-lg"></i>
+                    Weitere Flugplätze anfragen
+                </button>
+
+                <div class="requests-list" id="requestsList">
+                    <!-- Anfragen werden hier dynamisch eingefügt -->
+                </div>
+            </div>
+
+            <!-- Mittlere Spalte: Detail + Kalender -->
+            <div class="detail-panel">
+                <div id="detailContent">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-inbox"></i>
+                        </div>
+                        <div class="empty-state-title">Keine Anfrage ausgewählt</div>
+                        <div class="empty-state-text">
+                            Wähle eine Anfrage aus der Liste links aus, um Details anzuzeigen.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rechte Spalte: Chat -->
+            <div class="chat-panel" id="chatPanel">
+                <div class="chat-empty-state">
+                    <div class="chat-empty-icon">
+                        <i class="bi bi-chat-dots"></i>
+                    </div>
+                    <div>Wähle eine Anfrage aus, um den Chat zu sehen</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Projekt Main JS -->
+    <script src="assets/main.js"></script>
+
+    <script>
+        // Demo-Datenstruktur
+        const camps = {
+            sommer: {
+                name: "Sommerfluglager 2025",
+                finalAirfieldSelected: false,
+                finalAirfieldId: null,
+                requests: [
+                    {
+                        id: 1,
+                        airfield: "Flugplatz Ohlstadt",
+                        location: "Ohlstadt, Bayern",
+                        dateRange: "12.08.2025 – 19.08.2025",
+                        dateStart: "2025-08-12",
+                        dateEnd: "2025-08-19",
+                        people: 18,
+                        aircraft: 6,
+                        status: "confirmed",
+                        statusText: "✅ Bestätigt",
+                        statusTooltip: "Bestätigt – Zeitraum fix",
+                        unreadMessages: 0,
+                        seen: true,
+                        chat: [
+                            { sender: "received", text: "Hallo! Eure Anfrage für August sieht gut aus. Wir können euch den Zeitraum bestätigen.", time: "10.08. 14:23" },
+                            { sender: "sent", text: "Das freut uns sehr! Können wir auch Hallenplätze für 2 Flugzeuge bekommen?", time: "10.08. 15:10" },
+                            { sender: "received", text: "Ja, das sollte kein Problem sein. Wir haben 3 Hallenplätze frei.", time: "10.08. 16:45" },
+                            { sender: "sent", text: "Perfekt! Gibt es eine Küche oder müssen wir alles selbst mitbringen?", time: "10.08. 17:02" },
+                            { sender: "received", text: "Wir haben eine voll ausgestattete Küche mit Herd, Kühlschrank und Geschirr. Bringt nur Lebensmittel mit.", time: "11.08. 09:15" }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        airfield: "Segelflugplatz Königsdorf",
+                        location: "Königsdorf, Bayern",
+                        dateRange: "05.08.2025 – 12.08.2025",
+                        dateStart: "2025-08-05",
+                        dateEnd: "2025-08-12",
+                        people: 15,
+                        aircraft: 5,
+                        status: "pending",
+                        statusText: "👁️ Gesehen",
+                        statusTooltip: "Vom Flugplatz gesehen",
+                        unreadMessages: 1,
+                        seen: true,
+                        chat: [
+                            { sender: "sent", text: "Hallo! Wir würden gerne mit unserem Verein ein Lager bei euch machen.", time: "05.08. 10:30" },
+                            { sender: "received", text: "Hallo! Danke für eure Anfrage. Der Zeitraum ist grundsätzlich möglich. Wie viele Personen seid ihr?", time: "06.08. 11:20" },
+                            { sender: "sent", text: "Wir sind etwa 15 Personen mit 5 Flugzeugen. Braucht ihr noch weitere Informationen?", time: "06.08. 13:45" },
+                            { sender: "received", text: "Habt ihr schon die Kennzeichenliste? Das würde uns sehr helfen.", time: "09.08. 10:15" }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        airfield: "Flugplatz Unterwössen",
+                        location: "Unterwössen, Bayern",
+                        dateRange: "20.08.2025 – 27.08.2025",
+                        dateStart: "2025-08-20",
+                        dateEnd: "2025-08-27",
+                        people: 12,
+                        aircraft: 4,
+                        status: "new",
+                        statusText: "⏳ Neu",
+                        statusTooltip: "Anfrage gesendet",
+                        unreadMessages: 0,
+                        seen: false,
+                        chat: [
+                            { sender: "sent", text: "Hallo! Wir interessieren uns für ein Lager Ende August bei euch.", time: "08.08. 09:15" }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        airfield: "Flugplatz Bad Wörishofen",
+                        location: "Bad Wörishofen, Bayern",
+                        dateRange: "15.08.2025 – 22.08.2025",
+                        dateStart: "2025-08-15",
+                        dateEnd: "2025-08-22",
+                        people: 20,
+                        aircraft: 7,
+                        status: "rejected",
+                        statusText: "❌ Abgelehnt",
+                        statusTooltip: "Abgelehnt – Zeitraum nicht verfügbar",
+                        unreadMessages: 0,
+                        seen: true,
+                        chat: [
+                            { sender: "sent", text: "Hallo! Wir würden gerne Mitte August zu euch kommen.", time: "01.08. 14:30" },
+                            { sender: "received", text: "Vielen Dank für eure Anfrage. Leider ist dieser Zeitraum bereits komplett ausgebucht.", time: "02.08. 10:15" },
+                            { sender: "received", text: "Wir hätten aber noch Kapazitäten Ende Juli oder Anfang September. Wäre das interessant?", time: "02.08. 10:17" },
+                            { sender: "sent", text: "Schade, aber der Zeitraum passt leider nicht für uns. Trotzdem danke!", time: "02.08. 11:30" }
+                        ]
+                    }
+                ]
+            },
+            herbst: {
+                name: "Herbstfluglager 2025",
+                finalAirfieldSelected: false,
+                finalAirfieldId: null,
+                requests: [
+                    {
+                        id: 5,
+                        airfield: "Flugplatz Hayingen",
+                        location: "Hayingen, Baden-Württemberg",
+                        dateRange: "15.09.2025 – 22.09.2025",
+                        dateStart: "2025-09-15",
+                        dateEnd: "2025-09-22",
+                        people: 14,
+                        aircraft: 5,
+                        status: "confirmed",
+                        statusText: "✅ Bestätigt",
+                        statusTooltip: "Bestätigt – Zeitraum fix",
+                        unreadMessages: 0,
+                        seen: true,
+                        chat: [
+                            { sender: "sent", text: "Hallo! Wir interessieren uns für September. Habt ihr da noch freie Kapazitäten?", time: "20.07. 11:00" },
+                            { sender: "received", text: "Ja, der Zeitraum ist noch frei! Wie viele Personen plant ihr?", time: "20.07. 14:30" }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        airfield: "Segelflugplatz Hahnweide",
+                        location: "Kirchheim unter Teck, Baden-Württemberg",
+                        dateRange: "08.09.2025 – 15.09.2025",
+                        dateStart: "2025-09-08",
+                        dateEnd: "2025-09-15",
+                        people: 16,
+                        aircraft: 6,
+                        status: "pending",
+                        statusText: "👁️ Gesehen",
+                        statusTooltip: "Vom Flugplatz gesehen",
+                        unreadMessages: 0,
+                        seen: true,
+                        chat: [
+                            { sender: "sent", text: "Hallo! Würde gerne ein Herbstlager bei euch machen.", time: "15.07. 09:45" },
+                            { sender: "received", text: "Danke für eure Anfrage! Wir prüfen das intern und melden uns bald.", time: "16.07. 10:20" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // Aktuelle Auswahl
+        let currentCamp = 'sommer';
+        let currentRequest = null;
+
+        // Initialisierung
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRequestsList();
+            generateCalendar();
+            
+            // Desktop Camp Selector Event
+            const campSelector = document.getElementById('campSelector');
+            if (campSelector) {
+                campSelector.addEventListener('change', function(e) {
+                    currentCamp = e.target.value;
+                    currentRequest = null;
+                    loadRequestsList();
+                    document.getElementById('detailContent').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="bi bi-inbox"></i>
+                            </div>
+                            <div class="empty-state-title">Keine Anfrage ausgewählt</div>
+                            <div class="empty-state-text">
+                                Wähle eine Anfrage aus der Liste links aus, um Details anzuzeigen.
+                            </div>
+                        </div>
+                    `;
+                    // Sync mobile dropdown
+                    const mobileCampSelector = document.getElementById('campSelectorMobile');
+                    if (mobileCampSelector) {
+                        mobileCampSelector.value = currentCamp;
+                    }
+                });
+            }
+
+            // Mobile Camp Selector Event
+            const mobileCampSelector = document.getElementById('campSelectorMobile');
+            if (mobileCampSelector) {
+                mobileCampSelector.addEventListener('change', function(e) {
+                    currentCamp = e.target.value;
+                    currentRequest = null;
+                    loadRequestsList();
+                    document.getElementById('detailContentMobile').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="bi bi-inbox"></i>
+                            </div>
+                            <div class="empty-state-title">Keine Anfrage ausgewählt</div>
+                            <div class="empty-state-text">
+                                Wähle eine Anfrage aus, um Details anzuzeigen.
+                            </div>
+                        </div>
+                    `;
+                    // Sync desktop dropdown
+                    const desktopCampSelector = document.getElementById('campSelector');
+                    if (desktopCampSelector) {
+                        desktopCampSelector.value = currentCamp;
+                    }
+                });
+            }
+
+            // Mobile Tabs Event Listeners
+            const mobileTabButtons = document.querySelectorAll('.mobile-tab-button');
+            mobileTabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-mobile-tab');
+                    
+                    // Deaktiviere alle Tabs
+                    mobileTabButtons.forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.mobile-tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Aktiviere ausgewählten Tab
+                    this.classList.add('active');
+                    document.getElementById('mobile-tab-' + targetTab).classList.add('active');
+                });
+            });
+        });
+
+        // Anfrageliste laden
+        function loadRequestsList() {
+            const requestsList = document.getElementById('requestsList');
+            const requestsListMobile = document.getElementById('requestsListMobile');
+            const requests = camps[currentCamp].requests;
+            
+            const html = requests.map(req => {
+                return `
+                    <div class="request-list-card ${currentRequest?.id === req.id ? 'active' : ''}" 
+                         onclick="selectRequest(${req.id})"
+                         role="button"
+                         tabindex="0"
+                         aria-label="Anfrage ${req.airfield}">
+                        ${req.unreadMessages > 0 ? `<div class="chat-badge" aria-label="${req.unreadMessages} ungelesene Nachrichten">${req.unreadMessages}</div>` : ''}
+                        <div class="request-card-header-small">
+                            <div style="flex: 1;">
+                                <div class="request-card-name">${req.airfield}</div>
+                                <div class="request-card-location">${req.location}</div>
+                            </div>
+                        </div>
+                        <div class="request-card-date">
+                            <i class="bi bi-calendar-event"></i>
+                            ${req.dateRange}
+                        </div>
+                        <div style="margin-top: 0.75rem;">
+                            <div class="status-badge-wrapper">
+                                <span class="${getStatusBadgeClass(req.status)}" aria-label="${req.statusTooltip}">
+                                    ${req.statusText}
+                                </span>
+                                <div class="status-badge-tooltip">${req.statusTooltip}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            if (requestsList) requestsList.innerHTML = html;
+            if (requestsListMobile) requestsListMobile.innerHTML = html;
+        }
+
+        // Anfrage auswählen
+        function selectRequest(requestId) {
+            const request = camps[currentCamp].requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            currentRequest = request;
+            
+            // Ungelesene Nachrichten zurücksetzen
+            request.unreadMessages = 0;
+            
+            // Liste aktualisieren
+            loadRequestsList();
+            
+            // Prüfen, ob es mehrere bestätigte Anfragen gibt
+            const confirmedRequests = camps[currentCamp].requests.filter(r => r.status === 'confirmed');
+            const showFinalSelectButton = confirmedRequests.length > 1 && !camps[currentCamp].finalAirfieldSelected;
+            
+            const isConfirmed = request.status === 'confirmed' || request.status === 'finalConfirmed';
+            const isRejected = request.status === 'rejected' || request.status === 'declinedByOrganizer';
+            const isFinalConfirmed = request.status === 'finalConfirmed';
+            
+            // Detail-HTML generieren
+            const detailHTML = `
+                <!-- Header mit Status und Actions -->
+                <div class="detail-header">
+                    <div class="detail-header-info">
+                        <div class="detail-airfield-name">${request.airfield}</div>
+                        <div class="detail-meta">
+                            <div class="detail-meta-item">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>${request.location}</span>
+                            </div>
+                            <div class="detail-meta-item">
+                                <span class="${getStatusBadgeClass(request.status)}">${request.statusText}</span>
+                            </div>
+                            ${request.seen ? `
+                                <div class="detail-meta-item">
+                                    <i class="bi bi-eye"></i>
+                                    <span style="font-size: 0.75rem; color: #737373;">Gesehen vom Flugplatz</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    ${showFinalSelectButton ? `
+                        <div class="detail-header-actions">
+                            <button class="btn-select-final" onclick="openFinalSelectionModal()" aria-label="Finalen Flugplatz wählen">
+                                <i class="bi bi-star"></i>
+                                Finalen Flugplatz wählen
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- Scrollbarer Content -->
+                <div class="detail-scrollable">
+                    <div class="detail-body">
+                        ${!request.seen ? `
+                            <div class="info-box info" role="alert">
+                                <div class="info-box-icon">
+                                    <i class="bi bi-info-circle"></i>
+                                </div>
+                                <div class="info-box-content">
+                                    <div class="info-box-title">Anfrage noch nicht gesehen</div>
+                                    <div class="info-box-text">Der Flugplatz hat deine Anfrage noch nicht geöffnet.</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${isFinalConfirmed ? `
+                            <div class="info-box success" role="status">
+                                <div class="info-box-icon">
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                                <div class="info-box-content">
+                                    <div class="info-box-title">Finaler Flugplatz</div>
+                                    <div class="info-box-text">Dies ist der finale Flugplatz für ${camps[currentCamp].name}. Alle anderen Anfragen wurden abgelehnt.</div>
+                                </div>
+                            </div>
+                        ` : isConfirmed ? `
+                            <div class="info-box success" role="status">
+                                <div class="info-box-icon">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <div class="info-box-content">
+                                    <div class="info-box-title">Anfrage bestätigt</div>
+                                    <div class="info-box-text">Der Zeitraum wurde bestätigt und kann nicht mehr geändert werden.</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${request.status === 'declinedByOrganizer' ? `
+                            <div class="info-box warning" role="alert">
+                                <div class="info-box-icon">
+                                    <i class="bi bi-x-circle"></i>
+                                </div>
+                                <div class="info-box-content">
+                                    <div class="info-box-title">Vom Organisator abgelehnt</div>
+                                    <div class="info-box-text">Diese Anfrage wurde zurückgezogen, da ein anderer Flugplatz ausgewählt wurde.</div>
+                                </div>
+                            </div>
+                        ` : isRejected && request.status !== 'declinedByOrganizer' ? `
+                            <div class="info-box warning" role="alert">
+                                <div class="info-box-icon">
+                                    <i class="bi bi-x-circle"></i>
+                                </div>
+                                <div class="info-box-content">
+                                    <div class="info-box-title">Anfrage abgelehnt</div>
+                                    <div class="info-box-text">Diese Anfrage wurde vom Flugplatz abgelehnt.</div>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <div class="detail-section">
+                            <div class="detail-section-title">Anfragedetails</div>
+                            
+                            <div class="form-row-inline">
+                                <div class="form-group-inline">
+                                    <label class="form-label-inline" for="dateRange">Zeitraum</label>
+                                    <input 
+                                        type="text" 
+                                        id="dateRange"
+                                        class="form-input-inline" 
+                                        value="${request.dateRange}" 
+                                        ${isConfirmed || isRejected ? 'disabled' : ''}
+                                        aria-label="Zeitraum der Anfrage">
+                                </div>
+                                <div class="form-group-inline">
+                                    <label class="form-label-inline" for="people">Personen</label>
+                                    <input 
+                                        type="number" 
+                                        id="people"
+                                        class="form-input-inline" 
+                                        value="${request.people}" 
+                                        ${isConfirmed || isRejected ? 'disabled' : ''}
+                                        aria-label="Anzahl Personen">
+                                </div>
+                                <div class="form-group-inline">
+                                    <label class="form-label-inline" for="aircraft">Flugzeuge</label>
+                                    <input 
+                                        type="number" 
+                                        id="aircraft"
+                                        class="form-input-inline" 
+                                        value="${request.aircraft}" 
+                                        ${isConfirmed || isRejected ? 'disabled' : ''}
+                                        aria-label="Anzahl Flugzeuge">
+                                </div>
+                            </div>
+
+                            <div class="form-group-inline">
+                                <label class="form-label-inline" for="notes">Notizen / Sonderwünsche</label>
+                                <textarea 
+                                    id="notes"
+                                    class="form-textarea-inline" 
+                                    placeholder="z.B. Hallenplätze benötigt, vegetarische Verpflegung, ..."
+                                    ${isConfirmed || isRejected ? 'disabled' : ''}></textarea>
+                            </div>
+                        </div>
+
+                        ${isConfirmed || isFinalConfirmed ? `
+                            <div class="detail-section">
+                                <div class="detail-section-title">Teilnehmer (${request.people})</div>
+                                <div class="detail-list">
+                                    <div class="detail-list-item">
+                                        <div class="detail-list-item-icon">MK</div>
+                                        <div class="detail-list-item-content">
+                                            <div class="detail-list-item-name">Max Krüger</div>
+                                            <div class="detail-list-item-meta">Jugendleiter • Pilot</div>
+                                        </div>
+                                    </div>
+                                    <div class="detail-list-item">
+                                        <div class="detail-list-item-icon">LS</div>
+                                        <div class="detail-list-item-content">
+                                            <div class="detail-list-item-name">Lisa Schmidt</div>
+                                            <div class="detail-list-item-meta">Fluglehrer • Pilot</div>
+                                        </div>
+                                    </div>
+                                    <div class="detail-list-item">
+                                        <div class="detail-list-item-icon">+16</div>
+                                        <div class="detail-list-item-content">
+                                            <div class="detail-list-item-name">16 weitere Teilnehmer</div>
+                                            <div class="detail-list-item-meta">Vollständige Liste in Teilnehmerdaten</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section">
+                                <div class="detail-section-title">Flugzeuge (${request.aircraft})</div>
+                                <div class="detail-list">
+                                    <div class="detail-list-item">
+                                        <div class="detail-list-item-icon"><i class="bi bi-airplane"></i></div>
+                                        <div class="detail-list-item-content">
+                                            <div class="detail-list-item-name">D-1234 • ASK 21</div>
+                                            <div class="detail-list-item-meta">Doppelsitzer • Spannweite 17m</div>
+                                        </div>
+                                    </div>
+                                    <div class="detail-list-item">
+                                        <div class="detail-list-item-icon"><i class="bi bi-airplane"></i></div>
+                                        <div class="detail-list-item-content">
+                                            <div class="detail-list-item-name">D-5678 • Discus 2c</div>
+                                            <div class="detail-list-item-meta">Einsitzer • Spannweite 18m</div>
+                                        </div>
+                                    </div>
+                                    <div class="detail-list-item">
+                                        <div class="detail-list-item-icon">+${request.aircraft - 2}</div>
+                                        <div class="detail-list-item-content">
+                                            <div class="detail-list-item-name">${request.aircraft - 2} weitere Flugzeuge</div>
+                                            <div class="detail-list-item-meta">Vollständige Liste in Flugzeugdaten</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- Footer mit Actions -->
+                ${!isRejected ? `
+                    <div class="detail-footer">
+                        ${!isConfirmed ? `
+                            <button class="button button-primary" onclick="saveChanges()">
+                                <i class="bi bi-save"></i>
+                                Änderungen speichern
+                            </button>
+                        ` : ''}
+                        ${isConfirmed && !isFinalConfirmed ? `
+                            <button class="button button-danger" onclick="withdrawRequest(${request.id})">
+                                <i class="bi bi-x-lg"></i>
+                                Anfrage zurückziehen
+                            </button>
+                        ` : ''}
+                    </div>
+                ` : ''}
+            `;
+            
+            // Setze HTML für Desktop und Mobile
+            const detailContent = document.getElementById('detailContent');
+            const detailContentMobile = document.getElementById('detailContentMobile');
+            
+            if (detailContent) detailContent.innerHTML = detailHTML;
+            if (detailContentMobile) detailContentMobile.innerHTML = detailHTML;
+            
+            // Chat laden
+            loadChat(request);
+            
+            // Auf Mobile automatisch zum Details-Tab wechseln
+            if (window.innerWidth <= 768) {
+                document.querySelectorAll('.mobile-tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.mobile-tab-content').forEach(content => content.classList.remove('active'));
+                
+                const detailsButton = document.querySelector('[data-mobile-tab="details"]');
+                const detailsContent = document.getElementById('mobile-tab-details');
+                
+                if (detailsButton) detailsButton.classList.add('active');
+                if (detailsContent) detailsContent.classList.add('active');
+            }
+        }
+
+        // Chat laden
+        function loadChat(request) {
+            const chatPanel = document.getElementById('chatPanel');
+            if (!chatPanel) return;
+            
+            const chatHTML = `
+                <div class="chat-panel-header">
+                    <h3 class="chat-panel-title">Nachrichten</h3>
+                </div>
+                
+                <div class="chat-messages">
+                    ${request.chat.map(msg => `
+                        <div class="chat-message ${msg.sender}">
+                            <div class="chat-message-avatar">${msg.sender === 'sent' ? 'D' : request.airfield.charAt(0)}</div>
+                            <div class="chat-message-content">
+                                <div class="chat-message-bubble">${msg.text}</div>
+                                <div class="chat-message-time">${msg.time}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="chat-panel-footer">
+                    <textarea 
+                        class="chat-textarea" 
+                        placeholder="Nachricht schreiben..."
+                        onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(${request.id}); }"></textarea>
+                    <button class="chat-send-button" onclick="sendMessage(${request.id})" aria-label="Nachricht senden">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </div>
+            `;
+            
+            chatPanel.innerHTML = chatHTML;
+            
+            // Scroll zum Ende des Chats
+            const chatMessages = chatPanel.querySelector('.chat-messages');
+            if (chatMessages) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        // Kalender generieren
+        function generateCalendar() {
+            const calendarContainer = document.getElementById('calendarContainerMobile');
+            if (!calendarContainer) return;
+            
+            // Einfacher Demo-Kalender
+            const daysOfWeek = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+            const daysInMonth = 31;
+            
+            let calendarHTML = '<div class="calendar-grid">';
+            
+            // Tag-Header
+            daysOfWeek.forEach(day => {
+                calendarHTML += `<div class="calendar-day-header">${day}</div>`;
+            });
+            
+            // Leere Tage am Anfang (August 2025 startet am Freitag)
+            for (let i = 0; i < 4; i++) {
+                calendarHTML += '<div class="calendar-day disabled"></div>';
+            }
+            
+            // Tage des Monats
+            for (let day = 1; day <= daysInMonth; day++) {
+                let dayClass = 'calendar-day';
+                
+                // Beispiel-Status für Tage
+                if (day >= 5 && day <= 12) {
+                    dayClass += ' booked';
+                } else if (day >= 12 && day <= 19) {
+                    dayClass += ' available';
+                } else if (day >= 20 && day <= 27) {
+                    dayClass += ' booked';
+                } else if (day === 11) {
+                    dayClass += ' today';
+                }
+                
+                calendarHTML += `<div class="${dayClass}">${day}</div>`;
+            }
+            
+            calendarHTML += '</div>';
+            calendarContainer.innerHTML = calendarHTML;
+        }
+
+        // Modal für finale Flugplatzauswahl öffnen
+        function openFinalSelectionModal() {
+            const confirmedRequests = camps[currentCamp].requests.filter(r => r.status === 'confirmed');
+            
+            if (confirmedRequests.length < 2) {
+                showSnackbar('Es gibt nicht genug bestätigte Anfragen zum Auswählen.', 'error');
+                return;
+            }
+            
+            const modalHTML = `
+                <div class="modal-overlay" onclick="closeFinalSelectionModalOnOverlay(event)">
+                    <div class="modal-content" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="modalTitle">Flugplatz für das Lager endgültig festlegen</h3>
+                        </div>
+                        <div class="modal-body">
+                            <p class="modal-description">
+                                Du hast mehrere bestätigte Anfragen. Bitte wähle, auf welchem Flugplatz das Fluglager stattfinden soll.
+                                Alle anderen Anfragen werden automatisch abgelehnt.
+                            </p>
+                            
+                            <div class="modal-airfield-list">
+                                ${confirmedRequests.map((req, idx) => `
+                                    <label class="modal-airfield-card" for="airfield-${req.id}">
+                                        <input 
+                                            type="radio" 
+                                            name="finalAirfield" 
+                                            id="airfield-${req.id}" 
+                                            value="${req.id}"
+                                            ${idx === 0 ? 'checked' : ''}
+                                            onchange="document.querySelectorAll('.modal-airfield-card').forEach(c => c.classList.remove('selected')); this.closest('.modal-airfield-card').classList.add('selected');">
+                                        <div class="modal-airfield-name">${req.airfield}</div>
+                                        <div class="modal-airfield-details">
+                                            <span><i class="bi bi-geo-alt"></i> ${req.location}</span>
+                                            <span><i class="bi bi-calendar-event"></i> ${req.dateRange}</span>
+                                            <span><i class="bi bi-people"></i> ${req.people} Personen</span>
+                                            <span><i class="bi bi-airplane"></i> ${req.aircraft} Flugzeuge</span>
+                                        </div>
+                                    </label>
+                                `).join('')}
+                            </div>
+                            
+                            <div class="modal-comment-checkbox">
+                                <input type="checkbox" id="sendComment" checked>
+                                <label for="sendComment">Kommentar an abgelehnte Plätze senden</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="button button-secondary" onclick="closeFinalSelectionModal()">
+                                Abbrechen
+                            </button>
+                            <button class="button button-primary" onclick="selectFinalAirfield()">
+                                <i class="bi bi-star"></i>
+                                Flugplatz auswählen und bestätigen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Set first card as selected
+            setTimeout(() => {
+                const firstCard = document.querySelector('.modal-airfield-card');
+                if (firstCard) firstCard.classList.add('selected');
+            }, 10);
+        }
+
+        // Modal schließen
+        function closeFinalSelectionModal() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) modal.remove();
+        }
+
+        // Modal schließen bei Klick auf Overlay
+        function closeFinalSelectionModalOnOverlay(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                closeFinalSelectionModal();
+            }
+        }
+
+        // Finalen Flugplatz auswählen
+        function selectFinalAirfield() {
+            const selectedInput = document.querySelector('input[name="finalAirfield"]:checked');
+            if (!selectedInput) return;
+            
+            const selectedId = parseInt(selectedInput.value);
+            const sendComment = document.getElementById('sendComment').checked;
+            
+            // Aktualisiere Datenstruktur
+            camps[currentCamp].finalAirfieldSelected = true;
+            camps[currentCamp].finalAirfieldId = selectedId;
+            
+            camps[currentCamp].requests = camps[currentCamp].requests.map(req => {
+                if (req.id === selectedId) {
+                    return {
+                        ...req,
+                        status: 'finalConfirmed',
+                        statusText: '⭐ Final bestätigt',
+                        statusTooltip: 'Finaler Flugplatz – Alle anderen Anfragen abgelehnt'
+                    };
+                } else if (req.status === 'confirmed') {
+                    // Füge Systemnachricht hinzu
+                    const newChat = [...req.chat, {
+                        sender: 'received',
+                        text: 'Der Organisator hat sich für einen anderen Flugplatz entschieden.',
+                        time: new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(',', '')
+                    }];
+                    
+                    return {
+                        ...req,
+                        status: 'declinedByOrganizer',
+                        statusText: '🚫 Abgelehnt',
+                        statusTooltip: 'Vom Organisator abgelehnt',
+                        chat: newChat
+                    };
+                }
+                return req;
+            });
+            
+            closeFinalSelectionModal();
+            loadRequestsList();
+            
+            // Wenn aktuell ausgewählte Anfrage betroffen ist, neu laden
+            if (currentRequest && (currentRequest.id === selectedId || currentRequest.status === 'confirmed')) {
+                selectRequest(currentRequest.id);
+            }
+            
+            showSnackbar('Flugplatz ausgewählt. Alle anderen Anfragen wurden abgelehnt.', 'success');
+        }
+
+        // Snackbar anzeigen
+        function showSnackbar(message, type = 'info') {
+            const snackbar = document.createElement('div');
+            snackbar.className = `snackbar ${type}`;
+            snackbar.innerHTML = `
+                <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(snackbar);
+            
+            setTimeout(() => {
+                snackbar.classList.add('hiding');
+                setTimeout(() => snackbar.remove(), 300);
+            }, 3000);
+        }
+
+        // Änderungen speichern
+        function saveChanges() {
+            showSnackbar('Änderungen wurden gespeichert', 'success');
+        }
+
+        // Anfrage zurückziehen
+        function withdrawRequest(requestId) {
+            if (!confirm('Möchtest du diese Anfrage wirklich zurückziehen?')) return;
+            
+            const request = camps[currentCamp].requests.find(r => r.id === requestId);
+            if (request) {
+                request.status = 'declinedByOrganizer';
+                request.statusText = '🚫 Zurückgezogen';
+                request.statusTooltip = 'Vom Organisator zurückgezogen';
+                
+                loadRequestsList();
+                selectRequest(requestId);
+                showSnackbar('Anfrage wurde zurückgezogen', 'success');
+            }
+        }
+
+        // Nachricht senden
+        function sendMessage(requestId) {
+            const textarea = document.querySelector('.chat-panel-footer .chat-textarea');
+            if (!textarea || !textarea.value.trim()) return;
+            
+            const message = textarea.value.trim();
+            const request = camps[currentCamp].requests.find(r => r.id === requestId);
+            
+            if (request) {
+                const now = new Date();
+                const timeStr = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth() + 1).toString().padStart(2, '0')}. ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                
+                request.chat.push({
+                    sender: 'sent',
+                    text: message,
+                    time: timeStr
+                });
+                
+                textarea.value = '';
+                selectRequest(requestId); // Reload detail view
+                showSnackbar('Nachricht gesendet', 'success');
+            }
+        }
+
+        // Hilfsfunktionen
+        function getStatusIcon(status) {
+            const icons = {
+                new: '⏳',
+                pending: '👁️',
+                confirmed: '✅',
+                rejected: '❌',
+                declinedByOrganizer: '🚫',
+                finalConfirmed: '⭐'
+            };
+            return icons[status] || '';
+        }
+
+        function getStatusBadgeClass(status) {
+            const classes = {
+                new: 'badge-custom',
+                pending: 'badge-custom badge-pending',
+                confirmed: 'badge-custom badge-confirmed',
+                rejected: 'badge-custom badge-error',
+                declinedByOrganizer: 'badge-custom badge-error',
+                finalConfirmed: 'badge-custom badge-confirmed'
+            };
+            return classes[status] || 'badge-custom';
+        }
+
+        // Kalender-Navigation (Placeholder)
+        function previousMonth() {
+            showSnackbar('Navigation zum vorherigen Monat', 'info');
+        }
+
+        function nextMonth() {
+            showSnackbar('Navigation zum nächsten Monat', 'info');
+        }
+    </script>
+</body>
+</html>

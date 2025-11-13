@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neues Fluglager planen – Fliegercamp</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Projekt Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+
+    <style>
+        body {
+            background: #F8F7F4;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .wizard-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #E5E5E5;
+            z-index: 0;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 24px;
+            left: 0;
+            height: 2px;
+            background: #000;
+            transition: width 0.3s ease;
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .progress-step-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 3px solid #E5E5E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #A3A3A3;
+            transition: all 0.3s ease;
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-step.active .progress-step-circle {
+            background: #000;
+            border-color: #000;
+            color: #FFFFFF;
+        }
+
+        .progress-step.completed .progress-step-circle {
+            background: #10B981;
+            border-color: #10B981;
+            color: #FFFFFF;
+        }
+
+        .progress-step-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #737373;
+            text-align: center;
+            transition: color 0.3s;
+        }
+
+        .progress-step.active .progress-step-label {
+            color: #000;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .progress-step-label {
+                font-size: 0.75rem;
+            }
+
+            .progress-step-circle {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* Wizard Card */
+        .wizard-card {
+            background: #FFFFFF;
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .wizard-card {
+                padding: 1.5rem;
+            }
+        }
+
+        .wizard-step {
+            display: none;
+        }
+
+        .wizard-step.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-header {
+            margin-bottom: 2rem;
+        }
+
+        .step-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-subtitle {
+            font-size: 1rem;
+            color: #525252;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: #171717;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-label-optional {
+            font-weight: 400;
+            color: #737373;
+            font-size: 0.875rem;
+        }
+
+        .form-control,
+        .form-select {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            padding: 0.875rem 1rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            background: #FFFFFF;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #A3A3A3;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-text {
+            font-size: 0.875rem;
+            color: #737373;
+            margin-top: 0.375rem;
+            display: block;
+        }
+
+        /* Date Range Inputs */
+        .date-range {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 576px) {
+            .date-range {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Number Input with +/- */
+        .number-input-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #F8F7F4;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .number-input-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 0.375rem;
+            background: #FFFFFF;
+            color: #000;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .number-input-btn:hover {
+            background: #000;
+            color: #FFFFFF;
+        }
+
+        .number-input-btn:disabled {
+            background: #E5E5E5;
+            color: #A3A3A3;
+            cursor: not-allowed;
+        }
+
+        .number-input-value {
+            flex: 1;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        /* Checkbox Groups */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .checkbox-card {
+            border: 2px solid #E5E5E5;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checkbox-card:hover {
+            border-color: #000;
+            background: #FAFAFA;
+        }
+
+        .checkbox-card input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .checkbox-card input[type="checkbox"]:checked {
+            background-color: #000;
+            border-color: #000;
+        }
+
+        .checkbox-card input[type="checkbox"]:checked ~ label {
+            font-weight: 600;
+        }
+
+        .checkbox-card label {
+            font-size: 0.9375rem;
+            color: #171717;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* Airfield Selection Cards */
+        .airfield-selection {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .airfield-select-card {
+            border: 2px solid #E5E5E5;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 1.25rem;
+            align-items: center;
+        }
+
+        .airfield-select-card:hover {
+            border-color: #000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .airfield-select-card.selected {
+            border-color: #000;
+            background: #FAFAFA;
+        }
+
+        .airfield-select-image {
+            width: 100px;
+            height: 80px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            background: #E5E5E5;
+        }
+
+        .airfield-select-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .airfield-select-info h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 0.25rem;
+        }
+
+        .airfield-select-location {
+            font-size: 0.875rem;
+            color: #737373;
+            margin-bottom: 0.5rem;
+        }
+
+        .airfield-select-features {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: #404040;
+        }
+
+        .airfield-select-features i {
+            margin-right: 0.25rem;
+        }
+
+        .airfield-select-price {
+            text-align: right;
+        }
+
+        .airfield-select-price-label {
+            font-size: 0.875rem;
+            color: #737373;
+            margin-bottom: 0.25rem;
+        }
+
+        .airfield-select-price-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .airfield-select-price-period {
+            font-size: 0.875rem;
+            font-weight: 400;
+        }
+
+        .availability-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .availability-badge.available {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .availability-badge.limited {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        @media (max-width: 768px) {
+            .airfield-select-card {
+                grid-template-columns: 1fr;
+            }
+
+            .airfield-select-image {
+                width: 100%;
+                height: 150px;
+            }
+
+            .airfield-select-price {
+                text-align: left;
+            }
+        }
+
+        /* Summary Section */
+        .summary-section {
+            background: #F8F7F4;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-section h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-size: 0.9375rem;
+            color: #525252;
+        }
+
+        .summary-value {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            border-top: 2px solid #D4D4D4;
+        }
+
+        .summary-total-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .summary-total-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        /* Wizard Navigation */
+        .wizard-navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-back {
+            background: #FFFFFF;
+            color: #404040;
+            border: 2px solid #E5E5E5;
+        }
+
+        .btn-back:hover {
+            background: #F8F7F4;
+            border-color: #000;
+            color: #000;
+        }
+
+        .btn-next,
+        .btn-submit {
+            background: #FFD700;
+            color: #000;
+        }
+
+        .btn-next:hover,
+        .btn-submit:hover {
+            background: #FFC700;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn:disabled {
+            background: #F5F5F5;
+            color: #A3A3A3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #EFF6FF;
+            border-left: 4px solid #3B82F6;
+            border-radius: 0.5rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: #1E40AF;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-box-text {
+            font-size: 0.9375rem;
+            color: #1E40AF;
+            margin: 0;
+        }
+
+        /* Success Message */
+        .success-message {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #D1FAE5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .success-icon i {
+            font-size: 3rem;
+            color: #10B981;
+        }
+
+        .success-message h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+
+        .success-message p {
+            font-size: 1.125rem;
+            color: #525252;
+            margin-bottom: 2rem;
+        }
+
+        .success-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+
+<body data-active-nav="fluglager">
+    <!-- Globale Navigation -->
+    <div id="global-layout"></div>
+
+    <main class="flex-grow-1">
+        <div class="wizard-container">
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-line" id="progressLine" style="width: 0%;"></div>
+                
+                <div class="progress-step active" data-step="1">
+                    <div class="progress-step-circle">1</div>
+                    <div class="progress-step-label">Basis-Infos</div>
+                </div>
+                
+                <div class="progress-step" data-step="2">
+                    <div class="progress-step-circle">2</div>
+                    <div class="progress-step-label">Flugplatz</div>
+                </div>
+                
+                <div class="progress-step" data-step="3">
+                    <div class="progress-step-circle">3</div>
+                    <div class="progress-step-label">Details</div>
+                </div>
+                
+                <div class="progress-step" data-step="4">
+                    <div class="progress-step-circle">4</div>
+                    <div class="progress-step-label">Zusammenfassung</div>
+                </div>
+            </div>
+
+            <!-- Wizard Card -->
+            <div class="wizard-card">
+                <form id="campForm">
+                    <!-- Step 1: Basis-Informationen -->
+                    <div class="wizard-step active" data-step="1">
+                        <div class="step-header">
+                            <h2 class="step-title">Basis-Informationen</h2>
+                            <p class="step-subtitle">Teile uns die grundlegenden Details zu deinem Fluglager mit</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="campName" class="form-label">Name des Fluglagers</label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="campName" 
+                                name="campName"
+                                placeholder="z.B. Sommerlager 2025"
+                                required>
+                            <small class="form-text">Dieser Name wird für die Verwaltung verwendet</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Zeitraum</label>
+                            <div class="date-range">
+                                <div>
+                                    <label for="dateFrom" class="form-label" style="font-size: 0.875rem; font-weight: 500;">Von</label>
+                                    <input 
+                                        type="date" 
+                                        class="form-control" 
+                                        id="dateFrom" 
+                                        name="dateFrom"
+                                        required>
+                                </div>
+                                <div>
+                                    <label for="dateTo" class="form-label" style="font-size: 0.875rem; font-weight: 500;">Bis</label>
+                                    <input 
+                                        type="date" 
+                                        class="form-control" 
+                                        id="dateTo" 
+                                        name="dateTo"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Erwartete Teilnehmerzahl</label>
+                            <div class="number-input-group">
+                                <button type="button" class="number-input-btn" id="decreaseParticipants">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <div class="number-input-value" id="participantsValue">15</div>
+                                <button type="button" class="number-input-btn" id="increaseParticipants">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                            <input type="hidden" id="participants" name="participants" value="15">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Anzahl Flugzeuge (ca.)</label>
+                            <div class="number-input-group">
+                                <button type="button" class="number-input-btn" id="decreaseAircraft">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <div class="number-input-value" id="aircraftValue">5</div>
+                                <button type="button" class="number-input-btn" id="increaseAircraft">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                            <input type="hidden" id="aircraft" name="aircraft" value="5">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="campType" class="form-label">Art des Lagers</label>
+                            <select class="form-select" id="campType" name="campType" required>
+                                <option value="">Bitte wählen...</option>
+                                <option value="jugendlager">Jugendlager</option>
+                                <option value="thermikcamp">Thermikcamp</option>
+                                <option value="winterschulung">Winterschulung</option>
+                                <option value="vereinslager">Vereinslager</option>
+                                <option value="schulungslager">Schulungslager</option>
+                                <option value="sonstiges">Sonstiges</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Flugplatz auswählen -->
+                    <div class="wizard-step" data-step="2">
+                        <div class="step-header">
+                            <h2 class="step-title">Flugplatz auswählen</h2>
+                            <p class="step-subtitle">Verfügbare Flugplätze in deinem gewählten Zeitraum</p>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-box-title">
+                                <i class="bi bi-info-circle-fill"></i>
+                                <span>Verfügbarkeit</span>
+                            </div>
+                            <p class="info-box-text">
+                                Wir zeigen dir nur Flugplätze, die in deinem gewählten Zeitraum verfügbar sind.
+                                Die Preise sind Schätzungen basierend auf deinen Angaben.
+                            </p>
+                        </div>
+
+                        <div class="airfield-selection">
+                            <!-- Airfield 1 -->
+                            <div class="airfield-select-card" data-airfield="ohlstadt">
+                                <div class="airfield-select-image">
+                                    <img src="https://images.unsplash.com/photo-1474302770737-173ee21bab63?w=200" alt="Flugplatz Ohlstadt">
+                                </div>
+                                <div class="airfield-select-info">
+                                    <h4>Flugplatz Ohlstadt</h4>
+                                    <div class="airfield-select-location">
+                                        <i class="bi bi-geo-alt-fill"></i> Ohlstadt, Bayern
+                                    </div>
+                                    <div class="airfield-select-features">
+                                        <span><i class="bi bi-arrows-angle-expand"></i> 800m</span>
+                                        <span><i class="bi bi-wind"></i> Winde</span>
+                                        <span><i class="bi bi-airplane"></i> F-Schlepp</span>
+                                        <span><i class="bi bi-house"></i> Camping</span>
+                                    </div>
+                                    <div class="availability-badge available">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        Vollständig verfügbar
+                                    </div>
+                                </div>
+                                <div class="airfield-select-price">
+                                    <div class="airfield-select-price-label">Geschätzt</div>
+                                    <div class="airfield-select-price-value">
+                                        675€ <span class="airfield-select-price-period">gesamt</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Airfield 2 -->
+                            <div class="airfield-select-card" data-airfield="hahnweide">
+                                <div class="airfield-select-image">
+                                    <img src="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=200" alt="Flugplatz Hahnweide">
+                                </div>
+                                <div class="airfield-select-info">
+                                    <h4>Flugplatz Hahnweide</h4>
+                                    <div class="airfield-select-location">
+                                        <i class="bi bi-geo-alt-fill"></i> Kirchheim unter Teck, Baden-Württemberg
+                                    </div>
+                                    <div class="airfield-select-features">
+                                        <span><i class="bi bi-arrows-angle-expand"></i> 900m</span>
+                                        <span><i class="bi bi-wind"></i> Winde</span>
+                                        <span><i class="bi bi-airplane"></i> F-Schlepp</span>
+                                        <span><i class="bi bi-house"></i> Zimmer</span>
+                                    </div>
+                                    <div class="availability-badge limited">
+                                        <i class="bi bi-exclamation-circle-fill"></i>
+                                        Begrenzt verfügbar
+                                    </div>
+                                </div>
+                                <div class="airfield-select-price">
+                                    <div class="airfield-select-price-label">Geschätzt</div>
+                                    <div class="airfield-select-price-value">
+                                        825€ <span class="airfield-select-price-period">gesamt</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Airfield 3 -->
+                            <div class="airfield-select-card" data-airfield="koenigsdorf">
+                                <div class="airfield-select-image">
+                                    <img src="https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=200" alt="Segelfluggelände Königsdorf">
+                                </div>
+                                <div class="airfield-select-info">
+                                    <h4>Segelfluggelände Königsdorf</h4>
+                                    <div class="airfield-select-location">
+                                        <i class="bi bi-geo-alt-fill"></i> Königsdorf, Bayern
+                                    </div>
+                                    <div class="airfield-select-features">
+                                        <span><i class="bi bi-arrows-angle-expand"></i> 600m</span>
+                                        <span><i class="bi bi-wind"></i> Winde</span>
+                                        <span><i class="bi bi-house"></i> Camping</span>
+                                    </div>
+                                    <div class="availability-badge available">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        Vollständig verfügbar
+                                    </div>
+                                </div>
+                                <div class="airfield-select-price">
+                                    <div class="airfield-select-price-label">Geschätzt</div>
+                                    <div class="airfield-select-price-value">
+                                        525€ <span class="airfield-select-price-period">gesamt</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="selectedAirfield" name="selectedAirfield">
+                    </div>
+
+                    <!-- Step 3: Details & Anforderungen -->
+                    <div class="wizard-step" data-step="3">
+                        <div class="step-header">
+                            <h2 class="step-title">Details & Anforderungen</h2>
+                            <p class="step-subtitle">Ergänze wichtige Informationen für den Flugplatz</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Geplante Startarten</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="startart" value="winde" checked>
+                                    <label>
+                                        <i class="bi bi-wind"></i> Windenschlepp
+                                    </label>
+                                </label>
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="startart" value="fschlepp">
+                                    <label>
+                                        <i class="bi bi-airplane"></i> F-Schlepp
+                                    </label>
+                                </label>
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="startart" value="eigenstart">
+                                    <label>
+                                        <i class="bi bi-rocket-takeoff"></i> Eigenstart
+                                    </label>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Camping-Bedarf</label>
+                            <div class="date-range">
+                                <div>
+                                    <label for="tents" class="form-label" style="font-size: 0.875rem; font-weight: 500;">Zelte</label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="tents" 
+                                        name="tents"
+                                        min="0"
+                                        value="0"
+                                        placeholder="Anzahl">
+                                </div>
+                                <div>
+                                    <label for="caravans" class="form-label" style="font-size: 0.875rem; font-weight: 500;">Wohnwagen</label>
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="caravans" 
+                                        name="caravans"
+                                        min="0"
+                                        value="0"
+                                        placeholder="Anzahl">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="specialRequests" class="form-label">
+                                Besondere Anforderungen 
+                                <span class="form-label-optional">(optional)</span>
+                            </label>
+                            <textarea 
+                                class="form-control" 
+                                id="specialRequests" 
+                                name="specialRequests"
+                                placeholder="z.B. Werkstatt-Zugang benötigt, Zugang zu Küche, besondere Schulungsanforderungen..."></textarea>
+                            <small class="form-text">Diese Informationen helfen dem Flugplatz, sich optimal vorzubereiten</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactPerson" class="form-label">Ansprechpartner vor Ort</label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="contactPerson" 
+                                name="contactPerson"
+                                placeholder="Name des Lagerchefs"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactPhone" class="form-label">Telefonnummer (Notfall)</label>
+                            <input 
+                                type="tel" 
+                                class="form-control" 
+                                id="contactPhone" 
+                                name="contactPhone"
+                                placeholder="+49 170 1234567"
+                                required>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Zusammenfassung -->
+                    <div class="wizard-step" data-step="4">
+                        <div class="step-header">
+                            <h2 class="step-title">Zusammenfassung & Absenden</h2>
+                            <p class="step-subtitle">Überprüfe deine Angaben und sende die Anfrage ab</p>
+                        </div>
+
+                        <div class="summary-section">
+                            <h3>Fluglager-Details</h3>
+                            <div class="summary-item">
+                                <span class="summary-label">Name</span>
+                                <span class="summary-value" id="summaryName">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Zeitraum</span>
+                                <span class="summary-value" id="summaryDates">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Teilnehmer</span>
+                                <span class="summary-value" id="summaryParticipants">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Flugzeuge</span>
+                                <span class="summary-value" id="summaryAircraft">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Art</span>
+                                <span class="summary-value" id="summaryType">-</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-section">
+                            <h3>Flugplatz</h3>
+                            <div class="summary-item">
+                                <span class="summary-label">Gewählt</span>
+                                <span class="summary-value" id="summaryAirfield">-</span>
+                            </div>
+                            <div class="summary-total">
+                                <span class="summary-total-label">Geschätzte Kosten</span>
+                                <span class="summary-total-value" id="summaryPrice">-</span>
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-box-title">
+                                <i class="bi bi-info-circle-fill"></i>
+                                <span>Wie geht es weiter?</span>
+                            </div>
+                            <p class="info-box-text">
+                                Nach dem Absenden erhält der Flugplatz deine Anfrage und wird sie prüfen. 
+                                Du erhältst eine Benachrichtigung per E-Mail, sobald der Flugplatz antwortet.
+                                Die Anfrage ist unverbindlich und kostenlos.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Success Message (versteckt) -->
+                    <div class="wizard-step" data-step="5">
+                        <div class="success-message">
+                            <div class="success-icon">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            <h2>Anfrage erfolgreich versendet!</h2>
+                            <p>
+                                Deine Anfrage wurde an den Flugplatz gesendet. Du erhältst eine 
+                                Bestätigung per E-Mail und wirst benachrichtigt, sobald der 
+                                Flugplatz antwortet.
+                            </p>
+                            <div class="success-actions">
+                                <a href="fluglager_organisator.html" class="btn btn-next">
+                                    Zu meinen Anfragen
+                                </a>
+                                <a href="flugplaetze_liste.html" class="btn btn-back">
+                                    Weitere Flugplätze suchen
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="wizard-navigation" id="wizardNavigation">
+                <button type="button" class="btn btn-back" id="btnBack">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Zurück</span>
+                </button>
+                <button type="button" class="btn btn-next" id="btnNext">
+                    <span>Weiter</span>
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/main_logged.js"></script>
+
+    <script>
+        // Wizard State
+        let currentStep = 1;
+        const totalSteps = 4;
+        const formData = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStepDisplay();
+            setupNumberInputs();
+            setupAirfieldSelection();
+        });
+
+        // Number Inputs
+        function setupNumberInputs() {
+            // Participants
+            document.getElementById('increaseParticipants').addEventListener('click', () => {
+                changeNumber('participants', 1);
+            });
+            document.getElementById('decreaseParticipants').addEventListener('click', () => {
+                changeNumber('participants', -1);
+            });
+
+            // Aircraft
+            document.getElementById('increaseAircraft').addEventListener('click', () => {
+                changeNumber('aircraft', 1);
+            });
+            document.getElementById('decreaseAircraft').addEventListener('click', () => {
+                changeNumber('aircraft', -1);
+            });
+        }
+
+        function changeNumber(field, delta) {
+            const input = document.getElementById(field);
+            const display = document.getElementById(field + 'Value');
+            let value = parseInt(input.value) + delta;
+            
+            if (field === 'participants') {
+                value = Math.max(1, Math.min(100, value));
+            } else if (field === 'aircraft') {
+                value = Math.max(1, Math.min(20, value));
+            }
+            
+            input.value = value;
+            display.textContent = value;
+        }
+
+        // Airfield Selection
+        function setupAirfieldSelection() {
+            document.querySelectorAll('.airfield-select-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Deselect all
+                    document.querySelectorAll('.airfield-select-card').forEach(c => {
+                        c.classList.remove('selected');
+                    });
+                    
+                    // Select this one
+                    this.classList.add('selected');
+                    document.getElementById('selectedAirfield').value = this.dataset.airfield;
+                });
+            });
+        }
+
+        // Navigation
+        document.getElementById('btnBack').addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepDisplay();
+            }
+        });
+
+        document.getElementById('btnNext').addEventListener('click', () => {
+            if (validateStep(currentStep)) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateStepDisplay();
+                    
+                    if (currentStep === 4) {
+                        updateSummary();
+                    }
+                } else {
+                    submitForm();
+                }
+            }
+        });
+
+        function validateStep(step) {
+            const currentStepEl = document.querySelector(`.wizard-step[data-step="${step}"]`);
+            const requiredFields = currentStepEl.querySelectorAll('[required]');
+            
+            for (let field of requiredFields) {
+                if (!field.value) {
+                    field.focus();
+                    alert('Bitte fülle alle erforderlichen Felder aus.');
+                    return false;
+                }
+            }
+            
+            if (step === 2 && !document.getElementById('selectedAirfield').value) {
+                alert('Bitte wähle einen Flugplatz aus.');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function updateStepDisplay() {
+            // Update steps
+            document.querySelectorAll('.wizard-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.querySelector(`.wizard-step[data-step="${currentStep}"]`).classList.add('active');
+
+            // Update progress
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                const stepNum = index + 1;
+                if (stepNum < currentStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (stepNum === currentStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+
+            // Update progress line
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressLine').style.width = progress + '%';
+
+            // Update buttons
+            const btnBack = document.getElementById('btnBack');
+            const btnNext = document.getElementById('btnNext');
+            const navigation = document.getElementById('wizardNavigation');
+
+            btnBack.style.display = currentStep === 1 || currentStep === 5 ? 'none' : 'flex';
+            
+            if (currentStep === totalSteps) {
+                btnNext.innerHTML = '<span>Anfrage absenden</span><i class="bi bi-check-lg"></i>';
+                btnNext.classList.add('btn-submit');
+            } else if (currentStep === 5) {
+                navigation.style.display = 'none';
+            } else {
+                btnNext.innerHTML = '<span>Weiter</span><i class="bi bi-arrow-right"></i>';
+                btnNext.classList.remove('btn-submit');
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateSummary() {
+            // Basic info
+            document.getElementById('summaryName').textContent = 
+                document.getElementById('campName').value || '-';
+            
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            if (dateFrom && dateTo) {
+                const from = new Date(dateFrom).toLocaleDateString('de-DE');
+                const to = new Date(dateTo).toLocaleDateString('de-DE');
+                document.getElementById('summaryDates').textContent = `${from} - ${to}`;
+            }
+            
+            document.getElementById('summaryParticipants').textContent = 
+                document.getElementById('participants').value + ' Personen';
+            
+            document.getElementById('summaryAircraft').textContent = 
+                document.getElementById('aircraft').value + ' Flugzeuge';
+            
+            const typeSelect = document.getElementById('campType');
+            document.getElementById('summaryType').textContent = 
+                typeSelect.options[typeSelect.selectedIndex].text;
+            
+            // Airfield
+            const selectedAirfield = document.getElementById('selectedAirfield').value;
+            const airfieldCard = document.querySelector(`.airfield-select-card[data-airfield="${selectedAirfield}"]`);
+            if (airfieldCard) {
+                const name = airfieldCard.querySelector('h4').textContent;
+                const price = airfieldCard.querySelector('.airfield-select-price-value').textContent.trim();
+                document.getElementById('summaryAirfield').textContent = name;
+                document.getElementById('summaryPrice').textContent = price;
+            }
+        }
+
+        function submitForm() {
+            // Hier würde die tatsächliche Formular-Übermittlung stattfinden
+            console.log('Form submitted');
+            
+            // Zeige Success-Nachricht
+            currentStep = 5;
+            updateStepDisplay();
+        }
+    </script>
+</body>
+</html>

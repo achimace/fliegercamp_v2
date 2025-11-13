@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluglager Verwaltung - Sommerfluglager 2025 - Fliegercamp</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Projekt-Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+
+    <style>
+        /* Tab-spezifische Styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-box {
+            background: #F8F7F4;
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: #FFD700;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon i {
+            font-size: 1.5rem;
+            color: #000;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #525252;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #171717;
+            line-height: 1.2;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item-label {
+            font-size: 0.75rem;
+            color: #525252;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-item-value {
+            font-size: 1rem;
+            color: #171717;
+            font-weight: 500;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .quick-action-card {
+            background: #F8F7F4;
+            border: 1px solid #E5E5E5;
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .quick-action-card:hover {
+            background: #FFFFFF;
+            border-color: #A3A3A3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-action-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quick-action-card.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .quick-action-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.75rem;
+            background: #FFD700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-action-icon i {
+            font-size: 1.5rem;
+            color: #000;
+        }
+
+        .quick-action-title {
+            font-weight: 600;
+            color: #171717;
+            margin-bottom: 0.25rem;
+        }
+
+        .quick-action-text {
+            font-size: 0.75rem;
+            color: #525252;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #E5E5E5;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .list-item:hover {
+            background: #F8F7F4;
+            border-color: #A3A3A3;
+        }
+
+        .list-item-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #FFD700;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .list-item-content {
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-weight: 600;
+            color: #171717;
+            margin-bottom: 0.25rem;
+        }
+
+        .list-item-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            color: #525252;
+            font-size: 0.875rem;
+        }
+
+        .list-item-meta i {
+            color: #737373;
+        }
+
+        .list-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: 1rem;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: #525252;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            color: #737373;
+        }
+
+        .empty-state-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #404040;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state-text {
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .feature-preview-card {
+            padding: 1rem;
+            background: #F8F7F4;
+            border-radius: 0.5rem;
+        }
+
+        .feature-preview-card i {
+            font-size: 1.5rem;
+            color: #3B82F6;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-preview-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #171717;
+        }
+
+        .feature-preview-card p {
+            font-size: 0.875rem;
+            color: #525252;
+            margin: 0;
+        }
+
+        .sidebar-card {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-info-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .sidebar-info-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .sidebar-info-label {
+            font-size: 0.75rem;
+            color: #525252;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-info-value {
+            font-size: 1rem;
+            color: #171717;
+            font-weight: 500;
+        }
+
+        .sidebar-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* Chat Styles */
+        .chat-panel {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            height: 500px;
+        }
+
+        .chat-panel-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .chat-panel-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #000;
+            margin: 0;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 80%;
+        }
+
+        .chat-message.sent {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .chat-message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #FFD700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .chat-message.received .chat-message-avatar {
+            background: #F8F7F4;
+            color: #000;
+        }
+
+        .chat-message-content {
+            flex: 1;
+        }
+
+        .chat-message-bubble {
+            background: #F8F7F4;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #000;
+            word-wrap: break-word;
+        }
+
+        .chat-message.sent .chat-message-bubble {
+            background: #FFD700;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .chat-message.received .chat-message-bubble {
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .chat-message-time {
+            font-size: 0.75rem;
+            color: #A3A3A3;
+            margin-top: 0.25rem;
+            padding: 0 0.5rem;
+        }
+
+        .chat-message.sent .chat-message-time {
+            text-align: right;
+        }
+
+        .chat-panel-footer {
+            padding: 1rem;
+            border-top: 1px solid #E5E5E5;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .chat-textarea {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #E5E5E5;
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.875rem;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+        }
+
+        .chat-textarea:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-send-button {
+            padding: 0.75rem 1rem;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .chat-send-button:hover {
+            background: #171717;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-send-button i {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+
+<body data-active-nav="fluglager">
+    <!-- Globale Navbar + Offcanvas Sidebar wird hier dynamisch eingefügt -->
+    <div id="global-layout"></div>
+
+    <main class="flex-grow-1">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-custom">
+            <a class="breadcrumb-item-custom" href="/">
+                <i class="bi bi-house-door"></i>
+                <span>Home</span>
+            </a>
+            <span class="breadcrumb-separator">›</span>
+            <a class="breadcrumb-item-custom" href="mein_fluglager.html">
+                Meine Fluglager
+            </a>
+            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-item-custom">Sommerfluglager 2025</span>
+        </div>
+
+        <div class="page-container">
+            <!-- Page Header -->
+            <header class="page-header">
+                <div>
+                    <h1 class="page-title">Sommerfluglager 2025</h1>
+                    <div class="d-flex flex-wrap align-items-center gap-3 mt-2">
+                        <span class="text-muted">
+                            <i class="bi bi-geo-alt"></i> Flugplatz Ohlstadt, Bayern
+                        </span>
+                        <span class="text-muted">
+                            <i class="bi bi-calendar3"></i> 12.08.2025 - 19.08.2025
+                        </span>
+                        <span class="badge-custom badge-confirmed">
+                            <i class="bi bi-check-circle"></i> Bestätigt
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="row">
+                <!-- Main Content Column -->
+                <div class="col-lg-8">
+                    <!-- Tabs -->
+                    <div class="tabs" role="tablist">
+                        <button class="tab active" data-tab-target="tab-uebersicht">
+                            <i class="bi bi-grid"></i> Übersicht
+                        </button>
+                        <button class="tab" data-tab-target="tab-teilnehmer">
+                            <i class="bi bi-people"></i> Teilnehmer
+                        </button>
+                        <button class="tab" data-tab-target="tab-flugzeuge">
+                            <i class="bi bi-airplane"></i> Flugzeuge
+                        </button>
+                        <button class="tab" data-tab-target="tab-kommunikation">
+                            <i class="bi bi-envelope"></i> Kommunikation
+                            <span class="badge-custom badge-info ms-2" style="font-size: 0.65rem;">Demnächst</span>
+                        </button>
+                        <button class="tab" data-tab-target="tab-planung">
+                            <i class="bi bi-list-check"></i> Planung
+                            <span class="badge-custom badge-info ms-2" style="font-size: 0.65rem;">Demnächst</span>
+                        </button>
+                    </div>
+
+                    <!-- Tab Content: Übersicht -->
+                    <section class="tab-content active" id="tab-uebersicht">
+                        <!-- Stats -->
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-icon">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-label">Teilnehmer</div>
+                                    <div class="stat-value">18</div>
+                                </div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-icon">
+                                    <i class="bi bi-airplane-fill"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-label">Flugzeuge</div>
+                                    <div class="stat-value">6</div>
+                                </div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-icon">
+                                    <i class="bi bi-calendar-range"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-label">Dauer</div>
+                                    <div class="stat-value">7 Tage</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lager Informationen -->
+                        <div class="section">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <h2 class="section-title">Lagerinformationen</h2>
+                                    <p class="section-description">
+                                        Grundlegende Informationen zu deinem Fluglager
+                                    </p>
+                                </div>
+                                <button class="button button-secondary">
+                                    <i class="bi bi-pencil"></i> Bearbeiten
+                                </button>
+                            </div>
+
+                            <div class="info-grid">
+                                <div>
+                                    <div class="info-item-label">Flugplatz</div>
+                                    <div class="info-item-value">Flugplatz Ohlstadt</div>
+                                </div>
+                                <div>
+                                    <div class="info-item-label">Standort</div>
+                                    <div class="info-item-value">Ohlstadt, Bayern</div>
+                                </div>
+                                <div>
+                                    <div class="info-item-label">Zeitraum</div>
+                                    <div class="info-item-value">12.08.2025 - 19.08.2025</div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div>
+                                <div class="info-item-label">Lagerbeschreibung / Notizen</div>
+                                <div class="info-item-value" style="line-height: 1.6;">
+                                    z.B. Höhenplätze benötigt, vegetarische Verpflegung, besondere Anforderungen an Unterkunft...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Schnellaktionen -->
+                        <div class="section">
+                            <h2 class="section-title mb-3">Schnellaktionen</h2>
+                            <div class="quick-actions-grid">
+                                <div class="quick-action-card" onclick="switchTab('tab-teilnehmer')">
+                                    <div class="quick-action-icon">
+                                        <i class="bi bi-person-plus"></i>
+                                    </div>
+                                    <div class="quick-action-title">Teilnehmer hinzufügen</div>
+                                    <div class="quick-action-text">Neue Teilnehmer zur Liste hinzufügen</div>
+                                </div>
+                                <div class="quick-action-card" onclick="switchTab('tab-flugzeuge')">
+                                    <div class="quick-action-icon">
+                                        <i class="bi bi-airplane-fill"></i>
+                                    </div>
+                                    <div class="quick-action-title">Flugzeug hinzufügen</div>
+                                    <div class="quick-action-text">Flugzeuge zur Flotte hinzufügen</div>
+                                </div>
+                                <div class="quick-action-card disabled">
+                                    <div class="quick-action-icon">
+                                        <i class="bi bi-envelope"></i>
+                                    </div>
+                                    <div class="quick-action-title">Rundmail senden</div>
+                                    <div class="quick-action-text">
+                                        <span class="badge-custom badge-info">Demnächst verfügbar</span>
+                                    </div>
+                                </div>
+                                <div class="quick-action-card disabled">
+                                    <div class="quick-action-icon">
+                                        <i class="bi bi-download"></i>
+                                    </div>
+                                    <div class="quick-action-title">Listen exportieren</div>
+                                    <div class="quick-action-text">
+                                        <span class="badge-custom badge-info">Demnächst verfügbar</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Tab Content: Teilnehmer -->
+                    <section class="tab-content" id="tab-teilnehmer">
+                        <div class="section">
+                            <div class="d-flex justify-content-between align-items-start mb-4">
+                                <div>
+                                    <h2 class="section-title">Teilnehmerverwaltung</h2>
+                                    <p class="section-description">
+                                        Verwalte alle Teilnehmer deines Fluglagers
+                                    </p>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="button button-secondary" disabled style="opacity: 0.6;">
+                                        <i class="bi bi-send"></i> Alle einladen
+                                        <span class="badge-custom badge-info ms-2" style="font-size: 0.65rem;">Demnächst</span>
+                                    </button>
+                                    <button class="button button-primary">
+                                        <i class="bi bi-person-plus"></i> Teilnehmer hinzufügen
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Teilnehmer Liste -->
+                            <div class="list-item">
+                                <div class="list-item-avatar">MK</div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">Max Krüger</div>
+                                    <div class="list-item-meta">
+                                        <span><i class="bi bi-envelope"></i> max.krueger@example.com</span>
+                                        <span><i class="bi bi-trophy"></i> Organisator · Pilot</span>
+                                    </div>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button class="button button-secondary btn-icon" title="Bearbeiten">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="button button-secondary btn-icon" title="Löschen">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="list-item">
+                                <div class="list-item-avatar">LS</div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">Lisa Schmidt</div>
+                                    <div class="list-item-meta">
+                                        <span><i class="bi bi-envelope"></i> lisa.schmidt@example.com</span>
+                                        <span><i class="bi bi-person"></i> Pilot</span>
+                                    </div>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button class="button button-secondary btn-icon" title="Bearbeiten">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="button button-secondary btn-icon" title="Löschen">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="list-item">
+                                <div class="list-item-avatar">TM</div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">Thomas Müller</div>
+                                    <div class="list-item-meta">
+                                        <span><i class="bi bi-envelope"></i> thomas.mueller@example.com</span>
+                                        <span><i class="bi bi-person"></i> Pilot</span>
+                                    </div>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button class="button button-secondary btn-icon" title="Bearbeiten">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="button button-secondary btn-icon" title="Löschen">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- More participants indicator -->
+                            <div class="text-center mt-3">
+                                <button class="button button-secondary">
+                                    Weitere Teilnehmer anzeigen (15)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Future Feature Info -->
+                        <div class="alert-box alert-info-box">
+                            <div class="alert-icon">
+                                <i class="bi bi-info-circle"></i>
+                            </div>
+                            <div class="alert-content">
+                                <div class="alert-title">Demnächst: An- und Abreisetage</div>
+                                <div>
+                                    In Kürze kannst du alle Teilnehmer zur Plattform einladen. Sie können dann ihre An- und Abreisetage selbst eintragen.
+                                    Dies hilft dem Flugplatzverwalter bei der Abrechnung und Planung.
+                                    <ul class="mt-2 mb-0">
+                                        <li>Automatische Einladungs-E-Mails</li>
+                                        <li>Teilnehmer-Portal zur Dateneingabe</li>
+                                        <li>Übersicht über An- und Abreisetage</li>
+                                        <li>Export für Flugplatzverwalter</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Tab Content: Flugzeuge -->
+                    <section class="tab-content" id="tab-flugzeuge">
+                        <div class="section">
+                            <div class="d-flex justify-content-between align-items-start mb-4">
+                                <div>
+                                    <h2 class="section-title">Flugzeugverwaltung</h2>
+                                    <p class="section-description">
+                                        Verwalte alle Flugzeuge für dein Fluglager
+                                    </p>
+                                </div>
+                                <button class="button button-primary">
+                                    <i class="bi bi-plus-circle"></i> Flugzeug hinzufügen
+                                </button>
+                            </div>
+
+                            <!-- Flugzeug Liste -->
+                            <div class="list-item">
+                                <div class="list-item-avatar" style="background-color: #3B82F6;">
+                                    <i class="bi bi-airplane-fill" style="color: white; font-size: 1.25rem;"></i>
+                                </div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">D-1234 • ASK 21</div>
+                                    <div class="list-item-meta">
+                                        <span><i class="bi bi-person"></i> Besitzer: Max Krüger</span>
+                                        <span><i class="bi bi-shield-check"></i> Versicherung gültig</span>
+                                    </div>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button class="button button-secondary btn-icon" title="Bearbeiten">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="button button-secondary btn-icon" title="Löschen">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="list-item">
+                                <div class="list-item-avatar" style="background-color: #3B82F6;">
+                                    <i class="bi bi-airplane-fill" style="color: white; font-size: 1.25rem;"></i>
+                                </div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">D-5678 • Discus 2c</div>
+                                    <div class="list-item-meta">
+                                        <span><i class="bi bi-person"></i> Besitzer: Lisa Schmidt</span>
+                                        <span><i class="bi bi-shield-check"></i> Versicherung gültig</span>
+                                    </div>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button class="button button-secondary btn-icon" title="Bearbeiten">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="button button-secondary btn-icon" title="Löschen">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="list-item">
+                                <div class="list-item-avatar" style="background-color: #3B82F6;">
+                                    <i class="bi bi-airplane-fill" style="color: white; font-size: 1.25rem;"></i>
+                                </div>
+                                <div class="list-item-content">
+                                    <div class="list-item-title">D-9012 • ASW 27</div>
+                                    <div class="list-item-meta">
+                                        <span><i class="bi bi-person"></i> Besitzer: Thomas Müller</span>
+                                        <span><i class="bi bi-shield-check"></i> Versicherung gültig</span>
+                                    </div>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button class="button button-secondary btn-icon" title="Bearbeiten">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="button button-secondary btn-icon" title="Löschen">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- More aircraft indicator -->
+                            <div class="text-center mt-3">
+                                <button class="button button-secondary">
+                                    Weitere Flugzeuge anzeigen (3)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Flugzeug Details Info -->
+                        <div class="section">
+                            <h3 class="section-subtitle">Erforderliche Flugzeugdaten</h3>
+                            <div class="info-grid">
+                                <div>
+                                    <div class="info-item-label">Kennzeichen</div>
+                                    <div class="info-item-value">z.B. D-1234</div>
+                                </div>
+                                <div>
+                                    <div class="info-item-label">Typ/Muster</div>
+                                    <div class="info-item-value">z.B. ASK 21, Discus, ASW 27</div>
+                                </div>
+                                <div>
+                                    <div class="info-item-label">Besitzer</div>
+                                    <div class="info-item-value">Teilnehmer aus der Liste</div>
+                                </div>
+                                <div>
+                                    <div class="info-item-label">Versicherung</div>
+                                    <div class="info-item-value">Gültigkeitsdatum</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Tab Content: Kommunikation -->
+                    <section class="tab-content" id="tab-kommunikation">
+                        <div class="section">
+                            <div class="empty-state">
+                                <i class="bi bi-envelope"></i>
+                                <div class="empty-state-title">Kommunikationsfunktionen kommen bald</div>
+                                <p class="empty-state-text">
+                                    In Kürze kannst du hier Rundmails an alle Teilnehmer versenden,<br>
+                                    wichtige Updates teilen und die Kommunikation zentralisieren.
+                                </p>
+                                <span class="badge-custom badge-info">
+                                    <i class="bi bi-clock-history"></i> In Entwicklung
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Feature Preview -->
+                        <div class="section">
+                            <h3 class="section-subtitle">Geplante Features</h3>
+                            <div class="feature-preview-grid">
+                                <div class="feature-preview-card">
+                                    <i class="bi bi-envelope-check"></i>
+                                    <h4>Rundmails</h4>
+                                    <p>Versende Nachrichten an alle Teilnehmer gleichzeitig</p>
+                                </div>
+                                <div class="feature-preview-card">
+                                    <i class="bi bi-bell"></i>
+                                    <h4>Benachrichtigungen</h4>
+                                    <p>Automatische Updates bei wichtigen Änderungen</p>
+                                </div>
+                                <div class="feature-preview-card">
+                                    <i class="bi bi-chat-dots"></i>
+                                    <h4>Direktnachrichten</h4>
+                                    <p>Kommuniziere direkt mit einzelnen Teilnehmern</p>
+                                </div>
+                                <div class="feature-preview-card">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                    <h4>Dokumentenversand</h4>
+                                    <p>Teile wichtige Dokumente mit allen Teilnehmern</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Tab Content: Planung -->
+                    <section class="tab-content" id="tab-planung">
+                        <div class="section">
+                            <div class="empty-state">
+                                <i class="bi bi-list-check"></i>
+                                <div class="empty-state-title">Planungsfunktionen kommen bald</div>
+                                <p class="empty-state-text">
+                                    In Kürze kannst du hier ToDo-Listen erstellen, Aufgaben zuweisen<br>
+                                    und den Fortschritt deiner Lagerplanung verfolgen.
+                                </p>
+                                <span class="badge-custom badge-info">
+                                    <i class="bi bi-clock-history"></i> In Entwicklung
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Feature Preview -->
+                        <div class="section">
+                            <h3 class="section-subtitle">Geplante Features</h3>
+                            <div class="feature-preview-grid">
+                                <div class="feature-preview-card">
+                                    <i class="bi bi-check2-square"></i>
+                                    <h4>ToDo-Listen</h4>
+                                    <p>Erstelle und verwalte Aufgabenlisten für dein Lager</p>
+                                </div>
+                                <div class="feature-preview-card">
+                                    <i class="bi bi-person-check"></i>
+                                    <h4>Aufgaben zuweisen</h4>
+                                    <p>Weise Aufgaben bestimmten Teilnehmern zu</p>
+                                </div>
+                                <div class="feature-preview-card">
+                                    <i class="bi bi-calendar-check"></i>
+                                    <h4>Deadlines</h4>
+                                    <p>Setze Fristen für wichtige Aufgaben</p>
+                                </div>
+                                <div class="feature-preview-card">
+                                    <i class="bi bi-graph-up"></i>
+                                    <h4>Fortschritt</h4>
+                                    <p>Verfolge den Planungsfortschritt visuell</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Kontakt zum Flugplatz -->
+                    <div class="section sidebar-card">
+                        <h3 class="sidebar-card-title">Kontakt zum Flugplatz</h3>
+                        <div class="sidebar-info-item">
+                            <div class="sidebar-info-label">Ansprechpartner</div>
+                            <div class="sidebar-info-value">Hans Müller</div>
+                        </div>
+                        <div class="sidebar-info-item">
+                            <div class="sidebar-info-label">E-Mail</div>
+                            <div class="sidebar-info-value" style="word-break: break-all;">info@flugplatz-ohlstadt.de</div>
+                        </div>
+                        <div class="sidebar-info-item">
+                            <div class="sidebar-info-label">Telefon</div>
+                            <div class="sidebar-info-value">+49 8841 1234</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat -->
+                    <div class="section sidebar-card">
+                        <div class="chat-panel">
+                            <div class="chat-panel-header">
+                                <h3 class="chat-panel-title">Nachrichten</h3>
+                            </div>
+                            
+                            <div class="chat-messages">
+                                <div class="chat-message received">
+                                    <div class="chat-message-avatar">F</div>
+                                    <div class="chat-message-content">
+                                        <div class="chat-message-bubble">Hallo! Eure Anfrage für August sieht gut aus. Wir können euch den Zeitraum bestätigen.</div>
+                                        <div class="chat-message-time">10.08. 14:23</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-message sent">
+                                    <div class="chat-message-avatar">D</div>
+                                    <div class="chat-message-content">
+                                        <div class="chat-message-bubble">Das freut uns sehr! Können wir auch Hallenplätze für 2 Flugzeuge bekommen?</div>
+                                        <div class="chat-message-time">10.08. 15:10</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-message received">
+                                    <div class="chat-message-avatar">F</div>
+                                    <div class="chat-message-content">
+                                        <div class="chat-message-bubble">Ja, das sollte kein Problem sein. Wir haben 3 Hallenplätze frei.</div>
+                                        <div class="chat-message-time">10.08. 16:45</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-message sent">
+                                    <div class="chat-message-avatar">D</div>
+                                    <div class="chat-message-content">
+                                        <div class="chat-message-bubble">Perfekt! Gibt es eine Küche oder müssen wir alles selbst mitbringen?</div>
+                                        <div class="chat-message-time">10.08. 17:02</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-message received">
+                                    <div class="chat-message-avatar">F</div>
+                                    <div class="chat-message-content">
+                                        <div class="chat-message-bubble">Wir haben eine voll ausgestattete Küche mit Herd, Kühlschrank und Geschirr. Bringt nur Lebensmittel mit.</div>
+                                        <div class="chat-message-time">11.08. 09:15</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-panel-footer">
+                                <textarea 
+                                    class="chat-textarea" 
+                                    placeholder="Nachricht schreiben..."></textarea>
+                                <button class="chat-send-button" aria-label="Nachricht senden">
+                                    <i class="bi bi-send"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Gemeinsame Navigation & Funktionen -->
+    <script src="assets/main.js"></script>
+
+    <script>
+        // Tab Switching
+        function switchTab(tabId) {
+            // Remove active from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Add active to clicked tab
+            const targetTab = document.querySelector(`[data-tab-target="${tabId}"]`);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            
+            // Show corresponding content
+            const targetContent = document.getElementById(tabId);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        }
+
+        // Tab click handlers
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const target = this.getAttribute('data-tab-target');
+                if (target) {
+                    switchTab(target);
+                }
+            });
+        });
+
+        // Chat functionality
+        const chatTextarea = document.querySelector('.chat-textarea');
+        const chatSendButton = document.querySelector('.chat-send-button');
+        const chatMessages = document.querySelector('.chat-messages');
+
+        function sendMessage() {
+            if (!chatTextarea || !chatTextarea.value.trim()) return;
+            
+            const message = chatTextarea.value.trim();
+            const now = new Date();
+            const timeStr = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth() + 1).toString().padStart(2, '0')}. ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            // Create message element
+            const messageEl = document.createElement('div');
+            messageEl.className = 'chat-message sent';
+            messageEl.innerHTML = `
+                <div class="chat-message-avatar">D</div>
+                <div class="chat-message-content">
+                    <div class="chat-message-bubble">${message}</div>
+                    <div class="chat-message-time">${timeStr}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageEl);
+            chatTextarea.value = '';
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Send button click
+        if (chatSendButton) {
+            chatSendButton.addEventListener('click', sendMessage);
+        }
+
+        // Enter key to send (Shift+Enter for new line)
+        if (chatTextarea) {
+            chatTextarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
