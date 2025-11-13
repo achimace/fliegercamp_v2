@@ -21,7 +21,7 @@ const nextConfig = {
   trailingSlash: false,
   // Enable source maps in production for better debugging
   productionBrowserSourceMaps: false,
-  // Optimize CSS
+  // Optimize CSS Style
   optimizeFonts: true,
   // Compress output
   compress: true,
@@ -72,3 +72,4 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+
