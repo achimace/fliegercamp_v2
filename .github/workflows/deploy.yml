@@ -54,15 +54,16 @@ jobs:
             
             echo "⬇️ Pulling latest code..."
             
-            # --- FIX: Potenziell kaputtes .git-Verzeichnis entfernen, um saubere Initialisierung zu erzwingen ---
+            # Potenziell kaputtes .git-Verzeichnis entfernen
             rm -rf .git
             
             # Repository immer neu initialisieren
             git init
             git remote add origin https://github.com/achimace/fliegercamp_v2.git
             git fetch origin
-            # Sicherstellen, dass der main-Branch ausgecheckt wird, falls er schon existiert (durch fetch)
-            git checkout main || git checkout -b main origin/main
+            
+            # --- FIX: 'checkout' entfernen und direkt 'reset --hard' verwenden ---
+            # Dies überschreibt alle lokalen/nicht verfolgten Dateien und verhindert den Konflikt
             git reset --hard origin/main
             # --- ENDE FIX ---
             
