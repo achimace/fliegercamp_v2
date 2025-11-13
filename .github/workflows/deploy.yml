@@ -20,16 +20,13 @@ jobs:
         with:
           node-version: '20'
       
-      # Dependencies installieren mit legacy-peer-deps
       - name: Install dependencies
-        run: npm install --legacy-peer-deps  # ← HIER GEÄNDERT
+        run: npm install --legacy-peer-deps
       
-      # Tests (optional)
       - name: Run tests
         run: npm run test || echo "No tests configured"
         continue-on-error: true
       
-      # Build
       - name: Build application
         run: npm run build
         env:
@@ -37,7 +34,6 @@ jobs:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
       
-      # Deployment per SSH
       - name: Deploy to Server
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -47,12 +43,9 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
-            
             echo "🚀 Starting deployment..."
-            
             cd ${{ secrets.DEPLOY_PATH }}
             
-            # Backup erstellen
             echo "📦 Creating backup..."
             if [ -d ".next" ]; then
               tar -czf backup-$(date +%Y%m%d-%H%M%S).tar.gz \
@@ -62,43 +55,33 @@ jobs:
                 . 2>/dev/null || true
             fi
             
-            # Git Pull
             echo "⬇️ Pulling latest code..."
             if [ -d .git ]; then
               git fetch origin
               git reset --hard origin/main
             else
-              echo "Initializing git repository..."
               git init
               git remote add origin https://github.com/achimace/fliegercamp_v2.git
               git fetch origin
               git checkout -b main origin/main
             fi
             
-            # Dependencies installieren mit legacy-peer-deps
             echo "📚 Installing dependencies..."
-            npm install --production --legacy-peer-deps  # ← HIER AUCH GEÄNDERT
+            npm install --production --legacy-peer-deps
             
-            # Environment Variables prüfen
             echo "🔧 Checking environment..."
             if [ ! -f .env.production ]; then
-              echo "⚠️ Warning: .env.production not found!"
-              echo "Creating .env.production from secrets..."
-              cat > .env.production << 'EOF'
-            NODE_ENV=production
-            EOF
+              echo "⚠️ Creating basic .env.production..."
+              echo "NODE_ENV=production" > .env.production
             fi
             
-            # Build
             echo "🔨 Building application..."
             npm run build
             
-            # Prisma
             echo "🗄️ Running database migrations..."
             npx prisma migrate deploy || echo "⚠️ Migration skipped"
             npx prisma generate
             
-            # PM2 Reload/Restart
             echo "🔄 Restarting application..."
             if pm2 list | grep -q fliegercamp; then
               pm2 reload fliegercamp --update-env
@@ -107,11 +90,10 @@ jobs:
               pm2 save
             fi
             
-            # Cleanup
-            echo "🧹 Cleaning up old backups..."
+            echo "🧹 Cleaning up..."
             ls -t backup-*.tar.gz 2>/dev/null | tail -n +6 | xargs -r rm || true
             
-            echo "✅ Deployment completed successfully!"
+            echo "✅ Deployment completed!"
             pm2 list
       
       - name: Deployment Summary
