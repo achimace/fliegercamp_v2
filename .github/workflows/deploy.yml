@@ -49,6 +49,7 @@ jobs:
                 --exclude=node_modules \
                 --exclude=.next \
                 --exclude=uploads \
+                --exclude=backup-*.tar.gz \
                 . 2>/dev/null || true
             fi
             
@@ -74,21 +75,18 @@ jobs:
             echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
             echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env.production
 
-            # --- FIX: Installation ignoriert Postinstall-Skripte ---
+            # Installation mit Ignorieren von Postinstall-Skripten
             echo "📚 Installing all dependencies (ignoring scripts)..."
             npm install --legacy-peer-deps --ignore-scripts
-            # --- ENDE FIX ---
 
             echo "🗄️ Running database migrations..."
             npx prisma migrate deploy
             npx prisma generate
 
             echo "🔨 Building application..."
-            # --- FIX: Alten Build-Cache UND Playwright vor dem Build entfernen ---
             rm -rf .next
             rm -rf node_modules/playwright-core
             rm -rf node_modules/@playwright/test
-            # --- ENDE FIX ---
             npm run build
             
             echo "🔄 Restarting application..."
