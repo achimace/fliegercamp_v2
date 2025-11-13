@@ -59,19 +59,24 @@ jobs:
             git fetch origin
             git reset --hard origin/main
             
-            echo "📚 Installing all dependencies (inkl. devDeps für Build)..."
-            npm install --legacy-peer-deps
+            # --- FIX: NPM-Installationsstrategie geändert ---
+            echo "📚 Installing production dependencies..."
+            # 1. Nur Production-Dependencies installieren
+            npm install --omit=dev --legacy-peer-deps
+            
+            echo "📚 Installing required devDependencies for build..."
+            # 2. Manuell die für den Build nötigen devDeps nachinstallieren
+            npm install prisma@5 tailwindcss postcss autoprefixer --legacy-peer-deps
+            # --- ENDE FIX ---
             
             # Alle GitHub Secrets in die .env.production schreiben UND exportieren
             echo "🔧 Creating .env.production file and exporting variables..."
             
-            # 1. Variablen für die aktuelle Shell-Sitzung exportieren (für Prisma + Build)
             export NODE_ENV=production
             export DATABASE_URL=${{ secrets.DATABASE_URL }}
             export NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
             export NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
             
-            # 2. Dieselben Variablen in die .env.production schreiben (für zukünftige PM2-Läufe)
             echo "NODE_ENV=production" > .env.production
             echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.production
             echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env.production
@@ -82,7 +87,6 @@ jobs:
             npx prisma generate
 
             echo "🔨 Building application..."
-            # --- FIX: Alten Build-Cache vor dem Build entfernen ---
             rm -rf .next
             npm run build
             
