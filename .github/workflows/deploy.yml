@@ -77,7 +77,8 @@ jobs:
 
             # Installation mit Ignorieren von Postinstall-Skripten
             echo "📚 Installing all dependencies (ignoring scripts)..."
-            npm install --legacy-peer-deps --ignore-scripts
+            # npm install --legacy-peer-deps --ignore-scripts
+            npm install --legacy-peer-deps
 
             echo "🗄️ Running database migrations..."
             npx prisma migrate deploy
