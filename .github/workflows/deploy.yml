@@ -40,7 +40,7 @@ jobs:
             echo "🚀 Starting deployment..."
             cd ${{ secrets.DEPLOY_PATH }}
             
-            # Git-Sicherheitsbeschränkung für Verzeichnis-Eigentümer aufheben
+            # Git-Sicherheitsbeschränkung für Verzeichnis-Eigentümer aufheben..
             git config --global --add safe.directory /var/www/vhosts/fliegercamp.de/httpdocs
             
             echo "📦 Creating backup..."
